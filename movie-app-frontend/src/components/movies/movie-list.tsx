@@ -5,8 +5,8 @@ import type { MovieListProps } from "@/types";
 
 export const MovieList = memo(({ movies, heading }: MovieListProps) => {
   return (
-    <>
-      <h2>{heading}</h2>
+    <section>
+      <h2 className="mb-4 text-2xl font-bold">{heading}</h2>
 
       {movies.length === 0 && <p>No movies found</p>}
 
@@ -15,7 +15,7 @@ export const MovieList = memo(({ movies, heading }: MovieListProps) => {
           <MoviePreview movie={movie} key={movie.id} />
         ))}
       </div>
-    </>
+    </section>
   );
 });
 
