@@ -321,11 +321,15 @@ try {
   export const metadata: Metadata = {
     title: "Page Title",
     description: "Page description",
+    alternates: {
+      canonical: "/page-path",
+    },
   };
   ```
+- Set `metadataBase` in root layout for automatic canonical URL generation
 - Follow SEO best practices
 - Include Open Graph tags
-- Use canonical URLs
+- Always include canonical URLs to prevent duplicate content issues
 
 ---
 
