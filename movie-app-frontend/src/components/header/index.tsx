@@ -1,9 +1,10 @@
 "use client";
 
-import Search from "@/components/search/search";
 import Link from "next/link";
+import Search from "../search/search";
+
 import { ModeToggle } from "./mode-toggle";
-import {RegionSelect} from "./region-select";
+import { RegionSelect } from "./region-select";
 
 const Header = () => {
   return (
@@ -12,7 +13,7 @@ const Header = () => {
         <h1>Watchlist</h1>
       </Link>
 
-      {/* <Search /> */}
+      <Search />
 
       <RegionSelect />
 
