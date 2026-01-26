@@ -42,6 +42,28 @@ src/
 - **Components:** PascalCase exports (e.g., `export function MovieList()`)
 - **Use named exports** instead of default exports for consistency
 
+### Component Export Patterns
+
+**Preferred: Named Function Declarations**
+
+```tsx
+export function ComponentName() {
+  // No displayName needed - React DevTools uses function name
+  return <div>...</div>;
+}
+```
+
+**When Using HOCs (memo, forwardRef): Add displayName**
+
+```tsx
+export const ComponentName = memo(() => {
+  return <div>...</div>;
+});
+ComponentName.displayName = "ComponentName"; // ✅ Required for debugging
+```
+
+**Rule:** Only use `displayName` when wrapping components with Higher-Order Components (HOCs) like `memo()`, `forwardRef()`, or custom HOCs. Named function declarations automatically provide the name to React DevTools.
+
 ---
 
 ## Component Guidelines
