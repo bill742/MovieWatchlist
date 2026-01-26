@@ -39,9 +39,9 @@ export default function RootLayout({
           <RegionProvider>
             <div className="p-6">
               <Header />
-              <div id="main" className="container mx-auto max-w-6xl p-6">
+              <main className="container mx-auto max-w-6xl p-6">
                 {children}
-              </div>
+              </main>
             </div>
           </RegionProvider>
         </ThemeProvider>
