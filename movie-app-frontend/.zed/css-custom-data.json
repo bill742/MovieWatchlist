@@ -1,0 +1,33 @@
+{
+  "version": 1.1,
+  "atDirectives": [
+    {
+      "name": "@theme",
+      "description": "Tailwind CSS v4 theme configuration block for defining design tokens",
+      "references": [
+        {
+          "name": "Tailwind CSS v4 Documentation",
+          "url": "https://tailwindcss.com/docs/v4-beta"
+        }
+      ]
+    },
+    {
+      "name": "@import",
+      "description": "Import Tailwind CSS or other stylesheets. In Tailwind v4, use @import 'tailwindcss' to include all Tailwind styles.",
+      "references": [
+        {
+          "name": "Tailwind CSS v4 Documentation",
+          "url": "https://tailwindcss.com/docs/v4-beta"
+        }
+      ]
+    },
+    {
+      "name": "@utility",
+      "description": "Tailwind CSS v4 custom utility directive for creating reusable utility classes"
+    },
+    {
+      "name": "@variant",
+      "description": "Tailwind CSS v4 custom variant directive for creating custom variants"
+    }
+  ]
+}
