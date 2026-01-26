@@ -1,7 +1,13 @@
 "use client";
 
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { useRegion } from "@/lib/region-context";
 
 export function RegionSelect() {
@@ -21,10 +27,12 @@ export function RegionSelect() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="flex items-center gap-2 min-w-[80px] px-3 py-2 text-sm font-medium"
+          className="flex min-w-[80px] items-center gap-2 px-3 py-2 text-sm font-medium"
           aria-label="Select region"
         >
-          <span className="text-lg">{regionOptions.find((opt) => opt.value === region)?.flag}</span>
+          <span className="text-lg">
+            {regionOptions.find((opt) => opt.value === region)?.flag}
+          </span>
           <span>{region}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -33,7 +41,7 @@ export function RegionSelect() {
           <DropdownMenuItem
             key={option.value}
             onSelect={() => setRegion(option.value)}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex cursor-pointer items-center gap-2"
           >
             <span className="text-lg">{option.flag}</span>
             <span>{option.label}</span>
@@ -43,4 +51,3 @@ export function RegionSelect() {
     </DropdownMenu>
   );
 }
-

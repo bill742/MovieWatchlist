@@ -31,9 +31,20 @@ export function Search() {
             value={term}
             onChange={(e) => setTerm(e.target.value)}
           />
-          {term && <X onClick={clearSearch} className="reset" />}
-          <Button type="submit" className="submitButton">
-            <SearchIcon />
+          {term && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={clearSearch}
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+          <Button type="submit" aria-label="Search movies">
+            <SearchIcon className="h-4 w-4" />
+            <span className="sr-only">Search</span>
           </Button>
         </div>
       </form>
