@@ -30,7 +30,7 @@ export default function SearchPage() {
         );
         const searchResultsData = await searchResultsRes.json();
         setSearchResults(searchResultsData.results || []);
-      } catch (error) {
+      } catch {
         // Silently fail - user sees empty results
         setSearchResults([]);
       } finally {

@@ -42,7 +42,7 @@ export function SearchResults() {
         const searchResultsRes = await fetch(url, options);
         const searchResultsData = await searchResultsRes.json();
         setMovieResults(searchResultsData.results?.slice(0, 12) || []);
-      } catch (error) {
+      } catch {
         // Silently fail - user sees empty results
         setMovieResults([]);
       } finally {

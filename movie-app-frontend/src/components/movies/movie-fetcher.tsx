@@ -41,7 +41,7 @@ export function MovieFetcher() {
         );
         const upcomingData = await upcomingRes.json();
         setUpcomingMovies(upcomingData.results?.slice(0, 12) || []);
-      } catch (error) {
+      } catch {
         // Silently fail - user sees loading state or empty results
         setNowPlayingMovies([]);
         setUpcomingMovies([]);
