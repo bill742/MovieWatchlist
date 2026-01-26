@@ -29,9 +29,10 @@ export default function SearchPage() {
           options
         );
         const searchResultsData = await searchResultsRes.json();
-        setSearchResults(searchResultsData.results);
+        setSearchResults(searchResultsData.results || []);
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        // Silently fail - user sees empty results
+        setSearchResults([]);
       } finally {
         setLoading(false);
       }
