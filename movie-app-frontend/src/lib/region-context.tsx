@@ -1,11 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-
-interface RegionContextType {
-  region: string;
-  setRegion: (region: string) => void;
-}
+import type { RegionContextType } from "@/types";
 
 const RegionContext = createContext<RegionContextType | undefined>(undefined);
 

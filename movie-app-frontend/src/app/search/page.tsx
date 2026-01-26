@@ -1,7 +1,10 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import MovieList from "../../components/movies/movie-list";
+
+import { MovieList } from "@/components/movies/movie-list";
+import type { Movie } from "@/types";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();

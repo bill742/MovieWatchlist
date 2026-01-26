@@ -1,18 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRegion } from "@/lib/region-context";
-import MovieList from "./movie-list";
 
-interface Movie {
-  id: number;
-  title: string;
-  poster_path: string;
-  release_date: string;
-  release_dates: {
-    type: number;
-  }[];
-}
+import { MovieList } from "./movie-list";
+
+import { useRegion } from "@/lib/region-context";
+import type { Movie } from "@/types";
 
 export function MovieFetcher() {
   const { region } = useRegion();
@@ -60,7 +53,7 @@ export function MovieFetcher() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-lg">Loading movies...</div>
       </div>
     );

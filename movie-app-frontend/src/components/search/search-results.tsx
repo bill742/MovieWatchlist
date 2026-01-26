@@ -1,19 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRegion } from "@/lib/region-context";
-import MovieList from "@/components/movies/movie-list";
 import { useSearchParams } from "next/navigation";
 
-interface Movie {
-  id: number;
-  title: string;
-  poster_path: string;
-  release_date: string;
-  release_dates: {
-    type: number;
-  }[];
-}
+import { MovieList } from "@/components/movies/movie-list";
+import { useRegion } from "@/lib/region-context";
+import type { Movie } from "@/types";
 
 export function SearchResults() {
   const searchParams = useSearchParams();
@@ -62,7 +54,7 @@ export function SearchResults() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-lg">Searching for {searchTerm}...</div>
       </div>
     );
@@ -70,7 +62,10 @@ export function SearchResults() {
 
   return (
     <>
-      <MovieList movies={movieResults} heading={`Search results for ${searchTerm}`} />
+      <MovieList
+        movies={movieResults}
+        heading={`Search results for ${searchTerm}`}
+      />
     </>
   );
 }

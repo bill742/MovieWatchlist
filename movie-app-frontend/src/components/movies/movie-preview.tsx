@@ -1,31 +1,21 @@
-import { Card, CardTitle, CardDescription } from "@/components/ui/card";
-
 import Image from "next/image";
 import Link from "next/link";
 
-interface Movie {
-  id: number;
-  title: string;
-  poster_path: string;
-  release_date: string;
-}
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import type { MoviePreviewProps } from "@/types";
 
-interface MoviePreviewProps {
-  movie: Movie;
-}
-
-const MoviePreview = ({ movie }: MoviePreviewProps) => {
+export function MoviePreview({ movie }: MoviePreviewProps) {
   return (
     <Link href={`/movies/${movie.id}`} className="no-underline">
       <Card className="flex h-full flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white p-0 shadow-lg transition-shadow focus-within:shadow-2xl hover:shadow-2xl">
         <div className="relative aspect-[185/278] w-full">
           <Image
-            src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}${movie.poster_path}`}
+            src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
             alt={movie.title}
             fill
             className="h-full w-full object-cover"
             placeholder="blur"
-            blurDataURL={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            blurDataURL={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
             sizes="(max-width: 768px) 100vw, 185px"
             priority
           />
@@ -50,6 +40,4 @@ const MoviePreview = ({ movie }: MoviePreviewProps) => {
       </Card>
     </Link>
   );
-};
-
-export default MoviePreview;
+}

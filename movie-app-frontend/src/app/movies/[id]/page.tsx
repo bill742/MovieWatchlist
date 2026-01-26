@@ -1,23 +1,8 @@
 import { headers } from "next/headers";
 import Image from "next/image";
+import { type Genre, Movie } from "@/types";
 
-interface Genre {
-  id: number;
-  name: string;
-}
-
-interface Movie {
-  id: number;
-  title: string;
-  backdrop_path: string;
-  poster_path: string;
-  release_date: string;
-  genres: Genre[];
-  runtime: number;
-  overview: string;
-}
-
-const Movie = async () => {
+const SingleMovie = async () => {
   const options = {
     method: "GET",
     headers: {
@@ -43,16 +28,13 @@ const Movie = async () => {
   return (
     <div
       style={{
-        backgroundImage:
-          'url("https://image.tmdb.org/t/p/original' +
-          movie.backdrop_path +
-          '")',
+        backgroundImage: `url("${process.env.NEXT_PUBLIC_API_IMAGE_PATH}original${movie.backdrop_path}")`,
       }}
       className="relative flex h-screen flex-col items-center bg-cover bg-top"
     >
       <div className="absolute top-20 flex flex-row gap-x-4 bg-white/30 backdrop-blur-sm">
         <Image
-          src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}${movie.poster_path}`}
+          src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
           alt={movie.title}
           width={185}
           height={278}
@@ -76,4 +58,4 @@ const Movie = async () => {
   );
 };
 
-export default Movie;
+export default SingleMovie;

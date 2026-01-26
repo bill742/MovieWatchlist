@@ -1,19 +1,9 @@
-import { FC, memo } from "react";
-import MoviePreview from "./movie-preview";
+import { memo } from "react";
 
-interface Movie {
-  id: number;
-  title: string;
-  poster_path: string;
-  release_date: string;
-}
+import { MoviePreview } from "./movie-preview";
+import type { MovieListProps } from "@/types";
 
-interface MovieListProps {
-  movies: Movie[];
-  heading: string;
-}
-
-const MovieList: FC<MovieListProps> = memo(({ movies, heading }) => {
+export const MovieList = memo(({ movies, heading }: MovieListProps) => {
   return (
     <>
       <h2>{heading}</h2>
@@ -30,5 +20,3 @@ const MovieList: FC<MovieListProps> = memo(({ movies, heading }) => {
 });
 
 MovieList.displayName = "MovieList";
-
-export default MovieList;
