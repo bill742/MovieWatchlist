@@ -10,6 +10,8 @@ export interface Movie {
   genres: Genre[];
   runtime: number;
   overview: string;
+  vote_average?: number;
+  vote_count?: number;
 }
 
 export interface Genre {
@@ -29,4 +31,12 @@ export interface MoviePreviewProps {
 export interface RegionContextType {
   region: string;
   setRegion: (region: string) => void;
+}
+
+export interface Video {
+  id: string;
+  key: string;
+  name: string;
+  site: string;
+  type: string;
 }

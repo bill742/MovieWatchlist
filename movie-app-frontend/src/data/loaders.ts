@@ -4,7 +4,6 @@ import { fetchAPI, fetchAPIList } from "@/utils/fetch-apis";
 import type { Movie } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const SEARCH_URL = process.env.NEXT_PUBLIC_SEARCH_URL;
 
 // Cached function to fetch movie data - automatically deduplicated by React
 export const getMovie = cache(async (id: string): Promise<Movie | null> => {
@@ -12,7 +11,7 @@ export const getMovie = cache(async (id: string): Promise<Movie | null> => {
     console.error("NEXT_PUBLIC_API_URL is not defined");
     return null;
   }
-  const url = `${BASE_URL}/${id}?language=en-US`;
+  const url = `${BASE_URL}/movie/${id}?language=en-US`;
 
   const movie = await fetchAPI<Movie>(url);
 
@@ -28,7 +27,7 @@ export const getNowPlayingMovies = async (region: string) => {
     console.error("NEXT_PUBLIC_API_URL is not defined");
     return null;
   }
-  const url = `${BASE_URL}/now_playing?language=en-US&page=1&region=${region}`;
+  const url = `${BASE_URL}/movie/now_playing?language=en-US&page=1&region=${region}`;
   const nowPlayingRes = await fetchAPIList(url);
   return nowPlayingRes;
 };
@@ -39,7 +38,7 @@ export const getUpcomingMovies = async (region: string) => {
     return null;
   }
 
-  const url = `${BASE_URL}/upcoming?language=en-US&page=1&region=${region}`;
+  const url = `${BASE_URL}/movie/upcoming?language=en-US&page=1&region=${region}`;
   const upcomingRes = await fetchAPIList<Movie>(url);
 
   if (!upcomingRes) {
@@ -69,11 +68,62 @@ export const getUpcomingMovies = async (region: string) => {
 };
 
 export const getSearchResults = async (term: string) => {
-  if (!SEARCH_URL) {
-    console.error("NEXT_PUBLIC_SEARCH_URL is not defined");
+  if (!BASE_URL) {
+    console.error("NEXT_PUBLIC_API_URL is not defined");
     return null;
   }
-  const url = `${SEARCH_URL}${term}&include_adult=false&language=en-US&page=1`;
+  const url = `${BASE_URL}/search/movie?query=${term}&include_adult=false&language=en-US&page=1`;
   const searchResults = await fetchAPIList(url);
   return searchResults;
 };
+
+export const getTrendingMovies = cache(async (): Promise<Movie[] | null> => {
+  // Get trending movies for the week
+  const url = `${BASE_URL}/trending/movie/week?language=en-US`;
+  const trendingRes = await fetchAPIList<Movie>(url);
+  return trendingRes;
+});
+
+/**
+ * Fetches movie trailers/videos from TMDB API
+ * Prioritizes official trailers, falls back to teasers
+ */
+export const getMovieTrailer = cache(
+  async (movieId: number): Promise<string | null> => {
+    try {
+      const url = `${BASE_URL}/movie/${movieId}/videos?language=en-US`;
+
+      const response = await fetch(url, {
+        headers: {
+          accept: "application/json",
+          Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      const videos = data.results || [];
+
+      // Find official trailer (YouTube only)
+      const trailer = videos.find(
+        (video: {
+          site: string;
+          type: string;
+          official: boolean;
+          size: number;
+        }) =>
+          video.site === "YouTube" &&
+          (video.type === "Trailer" || video.type === "Teaser") &&
+          video.official === true &&
+          video.size === 1080
+      );
+
+      return trailer?.key || null;
+    } catch {
+      return null;
+    }
+  }
+);
