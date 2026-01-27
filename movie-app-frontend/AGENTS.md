@@ -146,32 +146,120 @@ When creating client components that use browser-specific features:
   - `NEXT_PUBLIC_API_KEY` - TMDB API authorization
   - `NEXT_PUBLIC_API_URL` - TMDB API base URL
 
+### Data Layer Architecture
+
+**IMPORTANT:** All API calls must be centralized in the data layer for consistency and reusability.
+
+#### **File Structure:**
+
+```
+src/
+├── data/
+│   └── loaders.ts          # All API data fetching functions
+├── utils/
+│   └── fetch-apis.ts       # Generic fetch utilities
+└── components/             # UI components (NO direct API calls)
+```
+
+#### **Pattern: Centralized Loaders**
+
+**✅ CORRECT - Use loader functions:**
+
+```tsx
+// src/data/loaders.ts
+export const getMovie = cache(async (id: string): Promise<Movie | null> => {
+  const url = `${BASE_URL}/${id}?language=en-US`;
+  return await fetchAPI<Movie>(url);
+});
+
+// In component
+import { getMovie } from "@/data/loaders";
+
+const movie = await getMovie(id);
+```
+
+**❌ INCORRECT - Direct fetch in component:**
+
+```tsx
+// DON'T DO THIS
+const response = await fetch(`${BASE_URL}/${id}`, options);
+const movie = await response.json();
+```
+
 ### Fetching Patterns
 
 **Server Components:**
 
 ```tsx
-async function getData() {
-  const res = await fetch("https://api.example.com/data", {
-    headers: {
-      Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
-    },
-  });
-  return res.json();
+import { getMovie } from "@/data/loaders";
+
+async function MoviePage({ params }: { params: { id: string } }) {
+  const movie = await getMovie(params.id);
+
+  if (!movie) {
+    return <div>Movie not found</div>;
+  }
+
+  return <div>{movie.title}</div>;
 }
 ```
 
 **Client Components:**
 
 ```tsx
-useEffect(() => {
-  const fetchData = async () => {
-    const res = await fetch(url, options);
-    const data = await res.json();
-    setData(data);
-  };
-  fetchData();
-}, [dependency]);
+import { useEffect, useState } from "react";
+import { getMovies } from "@/data/loaders";
+
+function MovieList() {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const data = await getMovies();
+      setMovies(data || []);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <Loader />;
+  return <div>{/* render movies */}</div>;
+}
+```
+
+### Loader Function Best Practices
+
+1. **Use React `cache()`** - Wrap functions with `cache()` for automatic request deduplication
+2. **Proper error handling** - Return `null` on errors, don't throw
+3. **Type safety** - Explicit return types (`Promise<Movie | null>`)
+4. **JSDoc comments** - Document what each loader does
+5. **Environment validation** - Check env vars before making requests
+
+**Example:**
+
+```tsx
+import { cache } from "react";
+
+/**
+ * Fetches movie trailer key from TMDB API
+ * Prioritizes official trailers, falls back to teasers
+ */
+export const getMovieTrailer = cache(
+  async (movieId: number): Promise<string | null> => {
+    try {
+      const url = `${BASE_URL}/movie/${movieId}/videos`;
+      const data = await fetchAPI(url);
+
+      // Business logic here
+      const trailer = data.results.find((v) => v.type === "Trailer");
+      return trailer?.key || null;
+    } catch {
+      return null;
+    }
+  }
+);
 ```
 
 ---
