@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 
 import { MovieList } from "./movie-list";
+import { Loader } from "@/components/ui/loader";
 
 import { useRegion } from "@/lib/region-context";
+import { getNowPlayingMovies, getUpcomingMovies } from "@/data/loaders";
 import type { Movie } from "@/types";
 
 export function MovieFetcher() {
@@ -18,29 +20,17 @@ export function MovieFetcher() {
       setLoading(true);
 
       try {
-        const options = {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
-          },
-        };
+        const nowPlayingData = await getNowPlayingMovies(region);
+        if (!nowPlayingData) {
+          throw new Error("Failed to fetch now playing movies");
+        }
+        setNowPlayingMovies(nowPlayingData?.slice(0, 12) || []);
 
-        // Fetch now playing theatrically released movies
-        const nowPlayingRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/now_playing?language=en-US&page=1&region=${region}`,
-          options
-        );
-        const nowPlayingData = await nowPlayingRes.json();
-        setNowPlayingMovies(nowPlayingData.results?.slice(0, 12) || []);
-
-        // Fetch upcoming movies
-        const upcomingRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/upcoming?language=en-US&page=1&region=${region}&sort_by=release_date.asc`,
-          options
-        );
-        const upcomingData = await upcomingRes.json();
-        setUpcomingMovies(upcomingData.results?.slice(0, 12) || []);
+        const upcomingData = await getUpcomingMovies(region);
+        if (!upcomingData) {
+          throw new Error("Failed to fetch upcoming movies");
+        }
+        setUpcomingMovies(upcomingData?.slice(0, 12) || []);
       } catch {
         // Silently fail - user sees loading state or empty results
         setNowPlayingMovies([]);
@@ -54,11 +44,7 @@ export function MovieFetcher() {
   }, [region]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-lg">Loading movies...</div>
-      </div>
-    );
+    return <Loader message="Loading movies..." size="sm" />;
   }
 
   return (

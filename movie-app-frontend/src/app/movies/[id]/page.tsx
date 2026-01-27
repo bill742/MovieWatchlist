@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { cache } from "react";
 import { headers } from "next/headers";
 import Image from "next/image";
 
-import type { Genre, Movie } from "@/types";
+import { getMovie } from "@/data/loaders";
+import type { Genre } from "@/types";
 
 // Get movie ID from headers
 async function getMovieId(): Promise<string | null> {
@@ -12,33 +12,6 @@ async function getMovieId(): Promise<string | null> {
   const id = pathname ? pathname.split("/").pop() : null;
   return id || null;
 }
-
-// Cached function to fetch movie data - automatically deduplicated by React
-const getMovie = cache(async (id: string): Promise<Movie | null> => {
-  try {
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
-      },
-    };
-
-    const movieRes = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/${id}?language=en-US`,
-      options
-    );
-
-    if (!movieRes.ok) {
-      return null;
-    }
-
-    const movie: Movie = await movieRes.json();
-    return movie;
-  } catch {
-    return null;
-  }
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   const id = await getMovieId();

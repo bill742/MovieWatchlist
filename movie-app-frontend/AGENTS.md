@@ -280,15 +280,39 @@ import type { Movie } from "@/types/movie";
 
 ### Loading States
 
+Use the reusable `Loader` component for all loading states:
+
 ```tsx
+import { Loader } from "@/components/ui/loader";
+
 if (loading) {
-  return (
-    <div className="flex min-h-[400px] items-center justify-center">
-      <div className="text-lg">Loading...</div>
-    </div>
-  );
+  return <Loader message="Loading data..." />;
 }
 ```
+
+**Loader Component Features:**
+
+- Animated spinner using Lucide's `Loader2` icon
+- Optional message prop for context-specific loading text
+- Configurable size: `sm`, `md` (default), `lg`
+- Accessible with screen reader support
+- Automatic dark mode support
+
+**Examples:**
+
+```tsx
+// Basic loader with message
+<Loader message="Loading movies..." />
+
+// Without message (just spinner)
+<Loader />
+
+// Different sizes
+<Loader size="sm" message="Loading..." />
+<Loader size="lg" />
+```
+
+**DO NOT** create custom loading divs. Always use the `Loader` component for consistency.
 
 ### Error Handling
 
