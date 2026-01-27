@@ -38,9 +38,34 @@ export const getUpcomingMovies = async (region: string) => {
     console.error("NEXT_PUBLIC_API_URL is not defined");
     return null;
   }
-  const url = `${BASE_URL}/upcoming?language=en-US&page=1&region=${region}&sort_by=release_date.asc`;
-  const upcomingRes = await fetchAPIList(url);
-  return upcomingRes;
+
+  const url = `${BASE_URL}/upcoming?language=en-US&page=1&region=${region}`;
+  const upcomingRes = await fetchAPIList<Movie>(url);
+
+  if (!upcomingRes) {
+    return null;
+  }
+
+  // Get tomorrow's date (start of day in local timezone)
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  // Filter movies that have release dates on or after tomorrow
+  const filteredMovies = upcomingRes.filter((movie) => {
+    if (!movie.release_date) return false;
+    const releaseDate = new Date(movie.release_date);
+    return releaseDate >= tomorrow;
+  });
+
+  // Sort by release date ascending
+  filteredMovies.sort((a, b) => {
+    const dateA = new Date(a.release_date).getTime();
+    const dateB = new Date(b.release_date).getTime();
+    return dateA - dateB;
+  });
+
+  return filteredMovies;
 };
 
 export const getSearchResults = async (term: string) => {
