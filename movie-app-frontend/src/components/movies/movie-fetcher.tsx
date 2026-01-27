@@ -2,15 +2,21 @@
 
 import { useEffect, useState } from "react";
 
-import { MovieList } from "./movie-list";
+import { HeroBanner } from "@/components/hero/hero-banner";
 import { Loader } from "@/components/ui/loader";
+import { MovieList } from "./movie-list";
 
+import {
+  getNowPlayingMovies,
+  getTrendingMovies,
+  getUpcomingMovies,
+} from "@/data/loaders";
 import { useRegion } from "@/lib/region-context";
-import { getNowPlayingMovies, getUpcomingMovies } from "@/data/loaders";
 import type { Movie } from "@/types";
 
 export function MovieFetcher() {
   const { region } = useRegion();
+  const [featuredMovie, setFeaturedMovie] = useState<Movie | null>(null);
   const [nowPlayingMovies, setNowPlayingMovies] = useState<Movie[]>([]);
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +26,12 @@ export function MovieFetcher() {
       setLoading(true);
 
       try {
+        // Fetch trending movies for hero banner
+        const trendingData = await getTrendingMovies();
+        if (trendingData && trendingData.length > 0) {
+          setFeaturedMovie(trendingData[0]); // Use first trending movie
+        }
+
         const nowPlayingData = await getNowPlayingMovies(region);
         if (!nowPlayingData) {
           throw new Error("Failed to fetch now playing movies");
@@ -44,13 +56,17 @@ export function MovieFetcher() {
   }, [region]);
 
   if (loading) {
-    return <Loader message="Loading movies..." size="sm" />;
+    return <Loader message="Loading movies..." />;
   }
 
   return (
-    <>
+    <div className="space-y-16">
+      {/* Hero Banner */}
+      {featuredMovie && <HeroBanner movie={featuredMovie} />}
+
+      {/* Movie Lists */}
       <MovieList movies={nowPlayingMovies} heading="Now Playing" />
       <MovieList movies={upcomingMovies} heading="Upcoming Releases" />
-    </>
+    </div>
   );
 }
