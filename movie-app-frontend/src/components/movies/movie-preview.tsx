@@ -1,41 +1,50 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Star } from "lucide-react";
 
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import type { MoviePreviewProps } from "@/types";
 
 export function MoviePreview({ movie }: MoviePreviewProps) {
   return (
-    <Link href={`/movies/${movie.id}`} className="no-underline">
-      <Card className="flex h-full flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white p-0 shadow-lg transition-shadow focus-within:shadow-2xl hover:shadow-2xl dark:border-neutral-700 dark:bg-neutral-800">
-        <div className="relative aspect-[185/278] w-full">
+    <Link href={`/movies/${movie.id}`} className="group no-underline">
+      <Card className="relative h-full overflow-hidden rounded-xl border-0 bg-transparent p-0 shadow-none transition-all duration-300 hover:scale-105">
+        {/* Poster with overlay */}
+        <div className="bg-muted relative aspect-[2/3] overflow-hidden rounded-xl">
           <Image
             src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
             alt={movie.title}
             fill
-            className="h-full w-full object-cover"
-            placeholder="blur"
-            blurDataURL={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
-            sizes="(max-width: 768px) 100vw, 185px"
-            priority
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
           />
-        </div>
-        <div className="flex flex-1 flex-col justify-between gap-2 px-4 py-3">
-          <CardTitle className="line-clamp-2 min-h-[2.5rem] text-center text-base font-semibold text-neutral-900 dark:text-neutral-100">
-            {movie.title}
-          </CardTitle>
-          <CardDescription className="text-center text-sm text-neutral-600 dark:text-neutral-400">
-            <span className="font-medium">Release:</span>{" "}
-            <time dateTime={movie.release_date}>
+
+          {/* Gradient overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+          {/* Rating badge */}
+          {movie.vote_average && movie.vote_average > 0 && (
+            <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              {movie.vote_average.toFixed(1)}
+            </div>
+          )}
+
+          {/* Info overlay (shows on hover) */}
+          <div className="absolute inset-x-0 bottom-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+            <h3 className="mb-1 line-clamp-2 text-base font-bold text-white">
+              {movie.title}
+            </h3>
+            <p className="text-sm text-gray-300">
               {movie.release_date
                 ? new Date(movie.release_date).toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
                   })
-                : "N/A"}
-            </time>
-          </CardDescription>
+                : "Release date TBA"}
+            </p>
+          </div>
         </div>
       </Card>
     </Link>

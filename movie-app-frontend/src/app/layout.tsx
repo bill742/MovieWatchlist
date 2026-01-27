@@ -47,12 +47,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <RegionProvider>
-            <div className="p-6">
-              <Header />
-              <main className="container mx-auto max-w-6xl p-6">
-                {children}
-              </main>
-            </div>
+            <Header />
+            <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              {children}
+            </main>
           </RegionProvider>
         </ThemeProvider>
       </body>

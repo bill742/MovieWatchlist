@@ -33,12 +33,12 @@ export default function SearchPage() {
   }, [term]);
 
   if (loading) {
-    return <Loader message="Loading search results..." size="lg" />;
+    return <Loader message="Loading search results..." />;
   }
 
   return (
-    <main className="row-start-2 flex flex-col items-center gap-[32px] sm:items-start">
-      <MovieList movies={searchResults} heading={`Results for ${term}`} />
-    </main>
+    <div className="space-y-12 py-8">
+      <MovieList movies={searchResults} heading={`Results for "${term}"`} />
+    </div>
   );
 }

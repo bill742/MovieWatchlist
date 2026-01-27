@@ -3,8 +3,10 @@ import { RegionSelect } from "@/components/header/region-select";
 
 export default function Home() {
   return (
-    <main className="row-start-2 flex flex-col items-center gap-[32px] sm:items-start">
-      <RegionSelect />
+    <main className="space-y-12 py-8">
+      <div className="flex flex-row items-center gap-4">
+        Select your region: <RegionSelect />
+      </div>
       <MovieFetcher />
     </main>
   );
