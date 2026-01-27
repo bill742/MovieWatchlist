@@ -30,6 +30,7 @@ export function Search() {
             placeholder="Search by Movie Title"
             value={term}
             onChange={(e) => setTerm(e.target.value)}
+            id="search"
           />
           {term && (
             <Button
