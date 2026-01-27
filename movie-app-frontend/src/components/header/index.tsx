@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import { Search } from "../search/search";
 import { ModeToggle } from "./mode-toggle";
-import { RegionSelect } from "./region-select";
 
 export function Header() {
   return (
@@ -14,8 +13,6 @@ export function Header() {
       </Link>
 
       <Search />
-
-      <RegionSelect />
 
       <ModeToggle />
     </header>
