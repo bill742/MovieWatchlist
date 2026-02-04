@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { Header } from "@/components/header";
+import Footer from "@/components/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { RegionProvider } from "@/lib/region-context";
 
@@ -51,6 +52,7 @@ export default function RootLayout({
             <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               {children}
             </main>
+            <Footer />
           </RegionProvider>
         </ThemeProvider>
       </body>
