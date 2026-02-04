@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Info } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Info,Play } from "lucide-react";
+
 import { TrailerModal } from "@/components/movies/trailer-modal";
+import { Button } from "@/components/ui/button";
+
 import type { Movie } from "@/types";
 
 interface HeroBannerProps {

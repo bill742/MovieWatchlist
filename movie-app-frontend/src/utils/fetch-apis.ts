@@ -7,11 +7,11 @@ import type { Movie } from "@/types";
  */
 export async function fetchAPI<T = Movie>(url: string): Promise<T | null> {
   const options: RequestInit = {
-    method: "GET",
     headers: {
-      accept: "application/json",
       Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
+      accept: "application/json",
     },
+    method: "GET",
   };
 
   try {
@@ -41,11 +41,11 @@ export async function fetchAPIList<T = Movie>(
   url: string
 ): Promise<T[] | null> {
   const options: RequestInit = {
-    method: "GET",
     headers: {
-      accept: "application/json",
       Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
+      accept: "application/json",
     },
+    method: "GET",
   };
 
   try {

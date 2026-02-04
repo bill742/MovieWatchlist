@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { useTheme } from "next-themes";
 
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 
 export function ModeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {

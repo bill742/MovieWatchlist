@@ -1,11 +1,12 @@
 import Image from "next/image";
+
 import type { CastAndCrew } from "@/types";
 
 export function CastAndCrewInfo({
-  profile_path,
-  name,
-  id,
   character,
+  id,
+  name,
+  profile_path,
 }: CastAndCrew) {
   return (
     <>

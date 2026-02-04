@@ -1,9 +1,10 @@
 import { memo } from "react";
 
-import { MoviePreview } from "./movie-preview";
 import type { MovieListProps } from "@/types";
 
-export const MovieList = memo(({ movies, heading }: MovieListProps) => {
+import { MoviePreview } from "./movie-preview";
+
+export const MovieList = memo(({ heading, movies }: MovieListProps) => {
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between">

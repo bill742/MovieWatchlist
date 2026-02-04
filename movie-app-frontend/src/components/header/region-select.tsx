@@ -14,12 +14,12 @@ export function RegionSelect() {
   const { region, setRegion } = useRegion();
 
   const regionOptions = [
-    { value: "US", label: "US", flag: "🇺🇸" },
-    { value: "CA", label: "CAN", flag: "🇨🇦" },
-    { value: "GB", label: "GB", flag: "🇬🇧" },
-    { value: "AU", label: "AU", flag: "🇦🇺" },
-    { value: "DE", label: "DE", flag: "🇩🇪" },
-    { value: "FR", label: "FR", flag: "🇫🇷" },
+    { flag: "🇺🇸", label: "US", value: "US" },
+    { flag: "🇨🇦", label: "CAN", value: "CA" },
+    { flag: "🇬🇧", label: "GB", value: "GB" },
+    { flag: "🇦🇺", label: "AU", value: "AU" },
+    { flag: "🇩🇪", label: "DE", value: "DE" },
+    { flag: "🇫🇷", label: "FR", value: "FR" },
   ];
 
   return (

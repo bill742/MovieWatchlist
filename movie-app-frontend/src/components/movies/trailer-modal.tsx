@@ -17,9 +17,9 @@ interface TrailerModalProps {
 
 export function TrailerModal({
   movieTitle,
-  trailerKey,
-  open,
   onOpenChange,
+  open,
+  trailerKey,
 }: TrailerModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

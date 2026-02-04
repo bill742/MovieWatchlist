@@ -1,7 +1,8 @@
 import { cache } from "react";
 
 import { fetchAPI, fetchAPIList } from "@/utils/fetch-apis";
-import type { Movie, CastAndCrew } from "@/types";
+
+import type { CastAndCrew,Movie } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -153,8 +154,8 @@ export const getMovieTrailer = cache(
 
       const response = await fetch(url, {
         headers: {
-          accept: "application/json",
           Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
+          accept: "application/json",
         },
       });
 

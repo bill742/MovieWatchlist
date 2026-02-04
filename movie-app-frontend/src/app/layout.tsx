@@ -1,34 +1,35 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { Header } from "@/components/header";
 import Footer from "@/components/footer";
+import { Header } from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
+
 import { RegionProvider } from "@/lib/region-context";
 
 import "./globals.css";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
   subsets: ["latin"],
+  variable: "--font-geist-sans",
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
+  variable: "--font-geist-mono",
 });
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://movie-watchlist.com";
 
 export const metadata: Metadata = {
-  title: "Movie Watchlist - Track Premiere Dates & Discover Films",
-  description:
-    "Discover and track movie premiere dates for upcoming and now playing films worldwide. Browse the latest releases and plan your movie watching.",
-  metadataBase: new URL(siteUrl),
   alternates: {
     canonical: "/",
   },
+  description:
+    "Discover and track movie premiere dates for upcoming and now playing films worldwide. Browse the latest releases and plan your movie watching.",
+  metadataBase: new URL(siteUrl),
+  title: "Movie Watchlist - Track Premiere Dates & Discover Films",
 };
 
 export default function RootLayout({

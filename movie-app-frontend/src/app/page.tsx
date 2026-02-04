@@ -1,5 +1,5 @@
-import { MovieFetcher } from "@/components/movies/movie-fetcher";
 import { RegionSelect } from "@/components/header/region-select";
+import { MovieFetcher } from "@/components/movies/movie-fetcher";
 
 export default function Home() {
   return (

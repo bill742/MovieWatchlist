@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 import { HeroBanner } from "@/components/hero/hero-banner";
 import { Loader } from "@/components/ui/loader";
-import { MovieList } from "./movie-list";
 
 import {
   getNowPlayingMovies,
@@ -12,7 +11,10 @@ import {
   getUpcomingMovies,
 } from "@/data/loaders";
 import { useRegion } from "@/lib/region-context";
+
 import type { Movie } from "@/types";
+
+import { MovieList } from "./movie-list";
 
 export function MovieFetcher() {
   const { region } = useRegion();

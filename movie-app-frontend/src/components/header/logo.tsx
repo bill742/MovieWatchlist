@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { Film } from "lucide-react";
 
 export function Logo() {

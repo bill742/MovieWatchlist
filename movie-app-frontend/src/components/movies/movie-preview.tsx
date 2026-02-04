@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import { Star } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
+
 import type { MoviePreviewProps } from "@/types";
 
 export function MoviePreview({ movie }: MoviePreviewProps) {
@@ -46,9 +48,9 @@ export function MoviePreview({ movie }: MoviePreviewProps) {
             <p className="text-sm text-gray-300">
               {movie.release_date
                 ? new Date(movie.release_date).toLocaleDateString(undefined, {
-                    year: "numeric",
-                    month: "short",
                     day: "numeric",
+                    month: "short",
+                    year: "numeric",
                   })
                 : "Release date TBA"}
             </p>

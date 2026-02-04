@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Image from "next/image";
-import { Star, Calendar, Clock } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { TrailerButton } from "@/components/movies/trailer-button";
-import { getMovie, getMovieTrailer, getCastAndCrew } from "@/data/loaders";
-import type { Genre } from "@/types";
+import { Calendar, Clock, Star } from "lucide-react";
+
 import { CastAndCrewInfo } from "@/components/movies/cast-and-crew-info";
+import { TrailerButton } from "@/components/movies/trailer-button";
+import { Badge } from "@/components/ui/badge";
+
+import { getCastAndCrew, getMovie, getMovieTrailer } from "@/data/loaders";
+import type { Genre } from "@/types";
 
 // Get movie ID from headers
 async function getMovieId(): Promise<string | null> {
@@ -22,8 +24,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   if (!id) {
     return {
-      title: "Movie Not Found - Movie Watchlist",
       description: "The requested movie could not be found.",
+      title: "Movie Not Found - Movie Watchlist",
     };
   }
 
@@ -31,19 +33,19 @@ export async function generateMetadata(): Promise<Metadata> {
 
   if (!movie) {
     return {
-      title: "Movie Not Found - Movie Watchlist",
       description: "The requested movie could not be found.",
+      title: "Movie Not Found - Movie Watchlist",
     };
   }
 
   return {
-    title: `${movie.title} (${movie.release_date ? new Date(movie.release_date).getFullYear() : "TBA"}) - Movie Watchlist`,
-    description:
-      movie.overview ||
-      `Watch ${movie.title} and discover more information about this film.`,
     alternates: {
       canonical: `/movies/${id}`,
     },
+    description:
+      movie.overview ||
+      `Watch ${movie.title} and discover more information about this film.`,
+    title: `${movie.title} (${movie.release_date ? new Date(movie.release_date).getFullYear() : "TBA"}) - Movie Watchlist`,
   };
 }
 
@@ -84,8 +86,6 @@ const SingleMovie = async () => {
 
   // Check if trailer is available
   const trailerKey = await getMovieTrailer(id);
-
-  console.log(movie.vote_average);
 
   return (
     <div className="min-h-screen pb-12">

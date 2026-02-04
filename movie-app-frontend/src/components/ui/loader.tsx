@@ -7,9 +7,9 @@ interface LoaderProps {
 
 export function Loader({ message, size = "md" }: LoaderProps) {
   const sizeClasses = {
-    sm: "h-6 w-6",
-    md: "h-8 w-8",
     lg: "h-12 w-12",
+    md: "h-8 w-8",
+    sm: "h-6 w-6",
   };
 
   return (

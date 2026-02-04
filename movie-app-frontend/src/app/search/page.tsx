@@ -7,6 +7,7 @@ import { MovieList } from "@/components/movies/movie-list";
 import { Loader } from "@/components/ui/loader";
 
 import { getSearchResults } from "@/data/loaders";
+
 import type { Movie } from "@/types";
 
 export default function SearchPage() {

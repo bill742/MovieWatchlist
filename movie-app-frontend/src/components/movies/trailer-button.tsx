@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
 import { Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
 import { TrailerModal } from "./trailer-modal";
 
 interface TrailerButtonProps {
@@ -15,9 +17,9 @@ interface TrailerButtonProps {
 
 export function TrailerButton({
   movieTitle,
+  size = "lg",
   trailerKey,
   variant = "default",
-  size = "lg",
 }: TrailerButtonProps) {
   const [showTrailer, setShowTrailer] = useState(false);
 
