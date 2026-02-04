@@ -56,7 +56,7 @@ export function HeroBanner({ movie }: HeroBannerProps) {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20"
+                  className="gap-2 bg-white/90 text-black backdrop-blur-sm hover:bg-black hover:text-white dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
                 >
                   <Info className="h-5 w-5" />
                   More Info
