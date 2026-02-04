@@ -6,7 +6,6 @@ import type { MovieListProps } from "@/types";
 export const MovieList = memo(({ movies, heading }: MovieListProps) => {
   return (
     <section className="space-y-6">
-      {/* Section Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">{heading}</h2>
@@ -14,7 +13,6 @@ export const MovieList = memo(({ movies, heading }: MovieListProps) => {
         </div>
       </div>
 
-      {/* Content */}
       {movies.length === 0 ? (
         <div className="border-muted-foreground/25 flex min-h-[300px] items-center justify-center rounded-xl border-2 border-dashed">
           <p className="text-muted-foreground">No movies found</p>
