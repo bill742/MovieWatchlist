@@ -7,7 +7,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function Search() {
+interface SearchProps {
+  onSubmit?: () => void;
+}
+
+export function Search({ onSubmit }: SearchProps = {}) {
   const [term, setTerm] = useState("");
   const router = useRouter();
 
@@ -16,6 +20,7 @@ export function Search() {
 
     router.push(`/search?term=${term}`);
     setTerm("");
+    onSubmit?.();
   };
 
   const clearSearch = () => {
@@ -23,7 +28,7 @@ export function Search() {
   };
 
   return (
-    <div className="w-60% flex p-4">
+    <div className="md:w-60% flex w-full p-0 md:p-4">
       <form id="searchForm" onSubmit={handleSubmit}>
         <div className="flex w-full gap-4">
           <Input

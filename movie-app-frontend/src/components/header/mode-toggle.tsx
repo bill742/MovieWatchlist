@@ -37,6 +37,7 @@ export function ModeToggle() {
             variant={"outline"}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            className="h-10 w-10"
           >
             {theme === "dark" ? (
               <Sun className="h-4 w-4" />

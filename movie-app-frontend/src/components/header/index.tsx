@@ -1,33 +1,55 @@
 "use client";
 
-import Link from "next/link";
-import { Film } from "lucide-react";
+import { useState } from "react";
 
-import { ModeToggle } from "./mode-toggle";
-import { Search } from "../search/search";
+import { Menu } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { HeaderContent } from "./header-content";
+import { Logo } from "./logo";
 
 export function Header() {
+  const [open, setOpen] = useState(false);
+
   return (
     <header className="border-border/40 bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 transition-opacity hover:opacity-80"
-        >
-          <div className="from-primary flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br to-purple-600">
-            <Film className="h-6 w-6 text-white" />
-          </div>
-          <span className="text-xl font-bold">
-            Movie<span className="text-primary">Watchlist</span>
-          </span>
-        </Link>
+        <Logo />
 
-        {/* Right side actions */}
-        <div className="flex items-center gap-2">
-          <Search />
-          <ModeToggle />
+        {/* Desktop: Right side actions */}
+        <div className="hidden items-center gap-2 md:flex">
+          <HeaderContent />
         </div>
+
+        {/* Mobile: Hamburger menu */}
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild className="md:hidden">
+            <Button variant="ghost" size="icon" aria-label="Open menu">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-full">
+            <SheetHeader>
+              <SheetTitle className="pt-4">
+                <Logo />
+              </SheetTitle>
+              <SheetDescription className="text-start">
+                Search for movies and adjust settings
+              </SheetDescription>
+            </SheetHeader>
+            <div className="mt-8 flex flex-col gap-6">
+              <HeaderContent onSearchSubmit={() => setOpen(false)} />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
