@@ -11,13 +11,21 @@ export function MoviePreview({ movie }: MoviePreviewProps) {
       <Card className="relative h-full overflow-hidden rounded-xl border-0 bg-transparent p-0 shadow-none transition-all duration-300 hover:scale-105">
         {/* Poster with overlay */}
         <div className="bg-muted relative aspect-[2/3] overflow-hidden rounded-xl">
-          <Image
-            src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
-            alt={movie.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-110"
-            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
-          />
+          {movie.poster_path ? (
+            <Image
+              src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
+              alt={movie.title}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-110"
+              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gray-200 text-center">
+              <span className="px-4 text-sm text-gray-500">
+                No Image Available
+              </span>
+            </div>
+          )}
 
           {/* Gradient overlay on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
