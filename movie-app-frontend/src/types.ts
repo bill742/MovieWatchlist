@@ -40,3 +40,11 @@ export interface Video {
   site: string;
   type: string;
 }
+
+export interface CastAndCrew {
+  name: string;
+  profile_path: string | null;
+  id: number;
+  character?: string;
+  job?: string;
+}
