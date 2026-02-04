@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { fetchAPI, fetchAPIList } from "@/utils/fetch-apis";
-import type { Movie } from "@/types";
+import type { Movie, CastAndCrew } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -22,63 +22,121 @@ export const getMovie = cache(async (id: string): Promise<Movie | null> => {
   return movie;
 });
 
-export const getNowPlayingMovies = async (region: string) => {
-  if (!BASE_URL) {
-    console.error("NEXT_PUBLIC_API_URL is not defined");
-    return null;
+export const getCastAndCrew = cache(
+  async (
+    id: string
+  ): Promise<{ cast: CastAndCrew[]; crew: CastAndCrew[] } | null> => {
+    if (!BASE_URL) {
+      console.error("NEXT_PUBLIC_API_URL is not defined");
+      return null;
+    }
+    const url = `${BASE_URL}/movie/${id}/credits?language=en-US`;
+
+    const credits = await fetchAPI<{
+      cast: CastAndCrew[];
+      crew: CastAndCrew[];
+    }>(url);
+
+    if (!credits) {
+      console.error(`Failed to fetch credits for movie with ID: ${id}`);
+      return null;
+    }
+
+    return credits;
   }
-  const url = `${BASE_URL}/movie/now_playing?language=en-US&page=1&region=${region}`;
-  const nowPlayingRes = await fetchAPIList(url);
-  return nowPlayingRes;
-};
+);
 
-export const getUpcomingMovies = async (region: string) => {
-  if (!BASE_URL) {
-    console.error("NEXT_PUBLIC_API_URL is not defined");
-    return null;
+/**
+ * Fetches currently playing movies from TMDB API
+ * @param region - ISO 3166-1 country code (e.g., "US", "CA", "GB")
+ * @returns Array of movies or null if request fails
+ */
+export const getNowPlayingMovies = cache(
+  async (region: string): Promise<Movie[] | null> => {
+    if (!BASE_URL) {
+      console.error("NEXT_PUBLIC_API_URL is not defined");
+      return null;
+    }
+    const url = `${BASE_URL}/movie/now_playing?language=en-US&page=1&region=${region}`;
+    const nowPlayingRes = await fetchAPIList<Movie>(url);
+    return nowPlayingRes;
   }
+);
 
-  const url = `${BASE_URL}/movie/upcoming?language=en-US&page=1&region=${region}`;
-  const upcomingRes = await fetchAPIList<Movie>(url);
+/**
+ * Fetches upcoming movies from TMDB API
+ * Filters to show only movies releasing tomorrow or later
+ * @param region - ISO 3166-1 country code (e.g., "US", "CA", "GB")
+ * @returns Array of movies sorted by release date or null if request fails
+ */
+export const getUpcomingMovies = cache(
+  async (region: string): Promise<Movie[] | null> => {
+    if (!BASE_URL) {
+      console.error("NEXT_PUBLIC_API_URL is not defined");
+      return null;
+    }
 
-  if (!upcomingRes) {
-    return null;
+    const url = `${BASE_URL}/movie/upcoming?language=en-US&page=1&region=${region}`;
+    const upcomingRes = await fetchAPIList<Movie>(url);
+
+    if (!upcomingRes) {
+      return null;
+    }
+
+    // Get tomorrow's date (start of day in local timezone)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    // Filter movies that have release dates on or after tomorrow
+    const filteredMovies = upcomingRes.filter((movie) => {
+      if (!movie.release_date) return false;
+      const releaseDate = new Date(movie.release_date);
+      return releaseDate >= tomorrow;
+    });
+
+    // Sort by release date ascending
+    filteredMovies.sort((a, b) => {
+      const dateA = new Date(a.release_date).getTime();
+      const dateB = new Date(b.release_date).getTime();
+      return dateA - dateB;
+    });
+
+    return filteredMovies;
   }
+);
 
-  // Get tomorrow's date (start of day in local timezone)
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+/**
+ * Searches for movies by title on TMDB API
+ * @param term - Search query string
+ * @returns Array of matching movies or null if request fails
+ */
+export const getSearchResults = cache(
+  async (term: string): Promise<Movie[] | null> => {
+    if (!BASE_URL) {
+      console.error("NEXT_PUBLIC_API_URL is not defined");
+      return null;
+    }
+    const url = `${BASE_URL}/search/movie?query=${term}&include_adult=false&language=en-US&page=1`;
+    const searchResults = await fetchAPIList<Movie>(url);
 
-  // Filter movies that have release dates on or after tomorrow
-  const filteredMovies = upcomingRes.filter((movie) => {
-    if (!movie.release_date) return false;
-    const releaseDate = new Date(movie.release_date);
-    return releaseDate >= tomorrow;
-  });
+    if (!searchResults) {
+      return null;
+    }
 
-  // Sort by release date ascending
-  filteredMovies.sort((a, b) => {
-    const dateA = new Date(a.release_date).getTime();
-    const dateB = new Date(b.release_date).getTime();
-    return dateA - dateB;
-  });
-
-  return filteredMovies;
-};
-
-export const getSearchResults = async (term: string) => {
-  if (!BASE_URL) {
-    console.error("NEXT_PUBLIC_API_URL is not defined");
-    return null;
+    return searchResults;
   }
-  const url = `${BASE_URL}/search/movie?query=${term}&include_adult=false&language=en-US&page=1`;
-  const searchResults = await fetchAPIList(url);
-  return searchResults;
-};
+);
 
+/**
+ * Fetches trending movies for the current week from TMDB API
+ * @returns Array of trending movies or null if request fails
+ */
 export const getTrendingMovies = cache(async (): Promise<Movie[] | null> => {
-  // Get trending movies for the week
+  if (!BASE_URL) {
+    console.error("NEXT_PUBLIC_API_URL is not defined");
+    return null;
+  }
   const url = `${BASE_URL}/trending/movie/week?language=en-US`;
   const trendingRes = await fetchAPIList<Movie>(url);
   return trendingRes;
@@ -89,7 +147,7 @@ export const getTrendingMovies = cache(async (): Promise<Movie[] | null> => {
  * Prioritizes official trailers, falls back to teasers
  */
 export const getMovieTrailer = cache(
-  async (movieId: number): Promise<string | null> => {
+  async (movieId: string): Promise<string | null> => {
     try {
       const url = `${BASE_URL}/movie/${movieId}/videos?language=en-US`;
 
