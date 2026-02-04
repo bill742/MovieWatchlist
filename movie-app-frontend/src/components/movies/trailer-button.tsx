@@ -7,15 +7,15 @@ import { Button } from "@/components/ui/button";
 import { TrailerModal } from "./trailer-modal";
 
 interface TrailerButtonProps {
-  movieId: number;
   movieTitle: string;
+  trailerKey: string;
   variant?: "default" | "outline" | "ghost";
   size?: "default" | "sm" | "lg";
 }
 
 export function TrailerButton({
-  movieId,
   movieTitle,
+  trailerKey,
   variant = "default",
   size = "lg",
 }: TrailerButtonProps) {
@@ -34,8 +34,8 @@ export function TrailerButton({
       </Button>
 
       <TrailerModal
-        movieId={movieId}
         movieTitle={movieTitle}
+        trailerKey={trailerKey}
         open={showTrailer}
         onOpenChange={setShowTrailer}
       />
