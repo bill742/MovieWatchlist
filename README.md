@@ -1,3 +1,3 @@
 ## Movie Watchlist
 
-An application to view information on movies currently playing and upcoming releases.
+An application to view and search information on movies currently playing and upcoming releases.
