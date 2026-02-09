@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 
-import { Info,Play } from "lucide-react";
+import { Info, Play } from "lucide-react";
 
 import { TrailerModal } from "@/components/movies/trailer-modal";
 import { Button } from "@/components/ui/button";
@@ -71,7 +72,7 @@ export function HeroBanner({ movie }: HeroBannerProps) {
 
       {/* Trailer Modal */}
       <TrailerModal
-        movieId={movie.id}
+        trailerKey={movie.id.toString()}
         movieTitle={movie.title}
         open={showTrailer}
         onOpenChange={setShowTrailer}
