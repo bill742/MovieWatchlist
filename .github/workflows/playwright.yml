@@ -20,11 +20,14 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: client
       - name: Run Playwright tests
+        env:
+          NEXT_PUBLIC_API_KEY: ${{ secrets.NEXT_PUBLIC_API_KEY }}
+          NEXT_PUBLIC_API_URL: https://api.themoviedb.org/3
+          NEXT_PUBLIC_API_IMAGE_PATH: https://image.tmdb.org/t/p/
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          NEXT_TELEMETRY_DISABLED: "1"
         run: npx playwright test
         working-directory: client
-        env:
-          # Pass the environment variable from GitHub to the test process
-          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
