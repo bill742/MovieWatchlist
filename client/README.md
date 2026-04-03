@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Movie Watchlist — Client
+
+A Next.js web application for discovering and exploring movies. Browse trending films, now-playing releases, and upcoming titles — filtered by your region — with search and detailed movie pages including cast, crew, and trailers.
+
+## Features
+
+- **Home page** — Trending hero banner, now-playing, and upcoming movies filtered by region
+- **Region selection** — ISO 3166-1 country codes (US, CA, GB, etc.) for region-specific release dates
+- **Search** — Full-text movie search
+- **Movie detail pages** — Poster, genres, rating, runtime, overview, directors, cast, and trailers
+- **Trailer playback** — Embedded YouTube trailers via a modal dialog
+- **Dark/Light theme** — System-aware with manual toggle
+- **Responsive design** — Mobile-first layout
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org) (App Router, Server Components)
+- [React 19](https://react.dev)
+- [Tailwind CSS 4](https://tailwindcss.com)
+- [Radix UI](https://www.radix-ui.com) — headless component primitives
+- [next-themes](https://github.com/pacocoursey/next-themes) — dark/light mode
+- [Lucide React](https://lucide.dev) — icons
+- [Playwright](https://playwright.dev) — end-to-end testing
+
+Data is sourced entirely from [The Movie Database (TMDB) API v3](https://developer.themovie.org).
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Create a `.env.local` file in this directory with your TMDB credentials:
+
+```bash
+NEXT_PUBLIC_API_KEY=Bearer <your_tmdb_read_access_token>
+NEXT_PUBLIC_API_URL=https://api.themoviedb.org/3
+NEXT_PUBLIC_API_IMAGE_PATH=https://image.tmdb.org/t/p/
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+A free TMDB API read access token can be obtained at [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api).
+
+### Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/
+│   ├── page.tsx              # Home page
+│   ├── layout.tsx            # Root layout (Header, Footer, providers)
+│   ├── not-found.tsx         # Custom 404 page
+│   ├── search/               # Search results page
+│   └── movies/[id]/          # Movie detail page
+├── components/
+│   ├── movie/                # MovieFetcher, MovieList, MoviePreview, HeroBanner
+│   ├── header/               # Search, RegionSelect, ModeToggle, Logo
+│   └── ui/                   # Radix-based Button, Card, Dialog, etc.
+├── data/
+│   └── loaders.ts            # TMDB API fetching functions
+├── context/
+│   └── region-context.tsx    # Global region selection state
+└── utils/
+    └── fetch-apis.ts         # Generic fetch utilities with error handling
+```
