@@ -1,7 +1,7 @@
+import path from "path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
         protocol: "https",
       },
     ],
+  },
+  turbopack: {
+    root: path.join(__dirname, "../.."),
   },
 };
 
