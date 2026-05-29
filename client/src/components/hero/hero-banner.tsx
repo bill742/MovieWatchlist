@@ -21,7 +21,7 @@ export function HeroBanner({ movie }: HeroBannerProps) {
 
   return (
     <>
-      <section className="relative h-[500px] w-full overflow-hidden rounded-2xl">
+      <section className="relative h-125 w-full overflow-hidden rounded-2xl">
         {/* Background with gradient overlay */}
         <div className="absolute inset-0">
           <Image
@@ -31,7 +31,7 @@ export function HeroBanner({ movie }: HeroBannerProps) {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent" />
         </div>
 
         {/* Content */}
