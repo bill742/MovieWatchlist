@@ -1,6 +1,47 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Home page", () => {
+  test("Theme toggle switches between light and dark modes", async ({
+    page,
+  }) => {
+    await page.goto("./");
+
+    const html = page.locator("html");
+    const toggleButton = page.getByRole("button", {
+      name: /switch to (light|dark) mode/i,
+    });
+    await expect(toggleButton).toBeVisible();
+
+    // Detect the starting theme from the html element's class
+    const initialClasses = (await html.getAttribute("class")) ?? "";
+    const startsInDark = initialClasses.split(/\s+/).includes("dark");
+
+    // Initial aria-label should reflect the opposite of the current theme
+    await expect(toggleButton).toHaveAccessibleName(
+      startsInDark ? "Switch to light mode" : "Switch to dark mode"
+    );
+
+    // Click once — theme should flip
+    await toggleButton.click();
+    if (startsInDark) {
+      await expect(html).not.toHaveClass(/\bdark\b/);
+      await expect(toggleButton).toHaveAccessibleName("Switch to dark mode");
+    } else {
+      await expect(html).toHaveClass(/\bdark\b/);
+      await expect(toggleButton).toHaveAccessibleName("Switch to light mode");
+    }
+
+    // Click again — theme should return to its original state
+    await toggleButton.click();
+    if (startsInDark) {
+      await expect(html).toHaveClass(/\bdark\b/);
+      await expect(toggleButton).toHaveAccessibleName("Switch to light mode");
+    } else {
+      await expect(html).not.toHaveClass(/\bdark\b/);
+      await expect(toggleButton).toHaveAccessibleName("Switch to dark mode");
+    }
+  });
+
   test("Displays Now Playing and Upcoming Releases lists", async ({ page }) => {
     await page.goto("./");
 
