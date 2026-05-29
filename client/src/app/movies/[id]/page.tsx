@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   if (!id) {
     return {
       description: "The requested movie could not be found.",
-      title: "Movie Not Found - Movie Watchlist",
+      title: `Movie Not Found - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
     };
   }
 
@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
   if (!movie) {
     return {
       description: "The requested movie could not be found.",
-      title: "Movie Not Found - Movie Watchlist",
+      title: `Movie Not Found - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
     };
   }
 
@@ -45,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       movie.overview ||
       `Watch ${movie.title} and discover more information about this film.`,
-    title: `${movie.title} (${movie.release_date ? new Date(movie.release_date).getFullYear() : "TBA"}) - Movie Watchlist`,
+    title: `${movie.title} (${movie.release_date ? new Date(movie.release_date).getFullYear() : "TBA"}) - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   };
 }
 
@@ -55,7 +55,7 @@ const SingleMovie = async () => {
   if (!id) {
     return (
       <main className="container mx-auto p-6">
-        <h1 className="mb-4 text-2xl font-bold">Movie not found</h1>
+        <h2 className="mb-4 text-2xl font-bold">Movie not found</h2>
         <p>
           The movie you&apos;re looking for doesn&apos;t exist or the URL is
           invalid.
@@ -69,7 +69,7 @@ const SingleMovie = async () => {
   if (!movie) {
     return (
       <main className="container mx-auto p-6">
-        <h1 className="mb-4 text-2xl font-bold">Movie not found</h1>
+        <h2 className="mb-4 text-2xl font-bold">Movie not found</h2>
         <p>
           The requested movie could not be found or failed to load from the
           database.
@@ -100,7 +100,7 @@ const SingleMovie = async () => {
               className="object-cover"
               priority
             />
-            <div className="from-background via-background/80 to-background/20 absolute inset-0 bg-gradient-to-t" />
+            <div className="from-background via-background/80 to-background/20 absolute inset-0 bg-linear-to-t" />
           </>
         )}
       </div>
@@ -110,7 +110,7 @@ const SingleMovie = async () => {
         <div className="flex flex-col gap-8 md:flex-row">
           {/* Poster */}
           <div className="shrink-0">
-            <div className="relative h-[450px] w-[300px] overflow-hidden rounded-xl shadow-2xl">
+            <div className="relative h-112.5 w-75 overflow-hidden rounded-xl shadow-2xl">
               {movie.poster_path ? (
                 <Image
                   src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
@@ -132,7 +132,7 @@ const SingleMovie = async () => {
           {/* Details */}
           <div className="flex-1 space-y-6">
             <div>
-              <h1 className="text-4xl font-bold md:text-5xl">{movie.title}</h1>
+              <h2 className="text-4xl font-bold md:text-5xl">{movie.title}</h2>
 
               {/* Meta info */}
               <div className="text-muted-foreground mt-3 flex flex-wrap items-center gap-4">

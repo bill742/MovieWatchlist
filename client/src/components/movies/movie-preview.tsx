@@ -12,7 +12,7 @@ export function MoviePreview({ movie }: MoviePreviewProps) {
     <Link href={`/movies/${movie.id}`} className="group no-underline">
       <Card className="relative h-full overflow-hidden rounded-xl border-0 bg-transparent p-0 shadow-none transition-all duration-300 hover:scale-105">
         {/* Poster with overlay */}
-        <div className="bg-muted relative aspect-[2/3] overflow-hidden rounded-xl">
+        <div className="bg-muted relative aspect-2/3 overflow-hidden rounded-xl">
           {movie.poster_path ? (
             <Image
               src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
@@ -22,15 +22,15 @@ export function MoviePreview({ movie }: MoviePreviewProps) {
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gray-200 text-center">
-              <span className="px-4 text-sm text-gray-500">
+            <div className="flex h-full w-full items-center justify-center bg-gray-200 text-center dark:bg-gray-700">
+              <span className="px-4 text-sm text-gray-600 dark:text-gray-300">
                 No Image Available
               </span>
             </div>
           )}
 
           {/* Gradient overlay on hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
           {/* Rating badge */}
           {movie.vote_average && movie.vote_average > 0 && (

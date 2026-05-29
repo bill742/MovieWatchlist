@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   description:
     "Discover and track movie premiere dates for upcoming and now playing films worldwide. Browse the latest releases and plan your movie watching.",
   metadataBase: new URL(siteUrl),
-  title: "Movie Watchlist - Track Premiere Dates & Discover Films",
+  title: `${process.env.NEXT_PUBLIC_SITE_NAME} - Track Premiere Dates & Discover Films`,
 };
 
 export default function RootLayout({

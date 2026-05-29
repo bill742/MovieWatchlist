@@ -13,7 +13,7 @@ export function Loader({ message, size = "md" }: LoaderProps) {
   };
 
   return (
-    <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
+    <div className="flex min-h-100 flex-col items-center justify-center gap-4">
       <Loader2
         className={`${sizeClasses[size]} text-primary animate-spin`}
         aria-hidden="true"
