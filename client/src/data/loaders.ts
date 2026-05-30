@@ -1,8 +1,7 @@
 import { cache } from "react";
 
+import type { CastAndCrew, Movie, Person, PersonMovieCredit } from "@/types";
 import { fetchAPI, fetchAPIList } from "@/utils/fetch-apis";
-
-import type { CastAndCrew,Movie } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -186,3 +185,40 @@ export const getMovieTrailer = cache(
     }
   }
 );
+
+export const getPersonMovieCredits = cache(
+  async (
+    id: string
+  ): Promise<{ cast: PersonMovieCredit[]; crew: PersonMovieCredit[] } | null> => {
+    if (!BASE_URL) {
+      console.error("NEXT_PUBLIC_API_URL is not defined");
+      return null;
+    }
+    const url = `${BASE_URL}/person/${id}/movie_credits?language=en-US`;
+    const credits = await fetchAPI<{
+      cast: PersonMovieCredit[];
+      crew: PersonMovieCredit[];
+    }>(url);
+    if (!credits) {
+      console.error(`Failed to fetch movie credits for person with ID: ${id}`);
+      return null;
+    }
+    return credits;
+  }
+);
+
+export const getPerson = cache(async (id: string): Promise<Person | null> => {
+  if (!BASE_URL) {
+    console.error("NEXT_PUBLIC_API_URL is not defined");
+    return null;
+  }
+  const url = `${BASE_URL}/person/${id}?language=en-US`;
+
+  const person = await fetchAPI<Person>(url);
+
+  if (!person) {
+    console.error(`Failed to fetch movie with ID: ${id}`);
+  }
+
+  return person;
+});

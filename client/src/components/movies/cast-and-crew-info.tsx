@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import type { CastAndCrew } from "@/types";
 
@@ -9,7 +10,7 @@ export function CastAndCrewInfo({
   profile_path,
 }: CastAndCrew) {
   return (
-    <>
+    <Link href={`/cast-and-crew/${id}`}>
       {profile_path ? (
         <Image
           src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w200${profile_path}`}
@@ -31,6 +32,6 @@ export function CastAndCrewInfo({
       {character && (
         <p className="text-muted-foreground text-sm">as {character}</p>
       )}
-    </>
+    </Link>
   );
 }

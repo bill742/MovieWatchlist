@@ -48,3 +48,24 @@ export interface CastAndCrew {
   character?: string;
   job?: string;
 }
+
+export interface Person {
+  name: string;
+  profile_path: string | null;
+  biography: string;
+  imdb_id: string;
+}
+
+export interface PersonMovieCredit {
+  id: number;
+  title: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  release_date: string;
+  overview: string;
+  vote_average: number;
+  vote_count: number;
+  character?: string;
+  job?: string;
+  department?: string;
+}
