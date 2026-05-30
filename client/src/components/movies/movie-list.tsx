@@ -10,12 +10,12 @@ export const MovieList = memo(({ heading, movies }: MovieListProps) => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">{heading}</h2>
-          <div className="from-primary mt-1 h-1 w-16 rounded-full bg-gradient-to-r to-purple-600" />
+          <div className="from-primary mt-1 h-1 w-16 rounded-full bg-linear-to-r to-purple-600" />
         </div>
       </div>
 
       {movies.length === 0 ? (
-        <div className="border-muted-foreground/25 flex min-h-[300px] items-center justify-center rounded-xl border-2 border-dashed">
+        <div className="border-muted-foreground/25 flex min-h-75 items-center justify-center rounded-xl border-2 border-dashed">
           <p className="text-muted-foreground">No movies found</p>
         </div>
       ) : (
