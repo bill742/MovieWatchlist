@@ -15,11 +15,11 @@ export function MoviePreview({ movie }: MoviePreviewProps) {
         <div className="bg-muted relative aspect-2/3 overflow-hidden rounded-xl">
           {movie.poster_path ? (
             <Image
-              src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w500${movie.poster_path}`}
+              src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w342${movie.poster_path}`}
               alt={movie.title}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-110"
-              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
+              sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 15vw"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gray-200 text-center dark:bg-gray-700">
