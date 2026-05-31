@@ -126,13 +126,13 @@ const SinglePerson = async () => {
 
   if (!id) {
     return (
-      <main className="container mx-auto p-6">
+      <div className="container mx-auto p-6">
         <h2 className="mb-4 text-2xl font-bold">Person not found</h2>
         <p>
           The person you&apos;re looking for doesn&apos;t exist or the URL is
           invalid.
         </p>
-      </main>
+      </div>
     );
   }
 
@@ -143,10 +143,10 @@ const SinglePerson = async () => {
 
   if (!person) {
     return (
-      <main className="container mx-auto p-6">
+      <div className="container mx-auto p-6">
         <h2 className="mb-4 text-2xl font-bold">Person not found</h2>
         <p>The requested person could not be found or failed to load.</p>
-      </main>
+      </div>
     );
   }
 
@@ -157,7 +157,7 @@ const SinglePerson = async () => {
   const crewByDepartment = credits ? groupCrewByDepartment(credits.crew) : [];
 
   return (
-    <main className="container mx-auto space-y-12 px-4 py-8">
+    <div className="container mx-auto space-y-12 py-8">
       {/* Person header */}
       <div className="flex flex-col gap-6 sm:flex-row">
         {person.profile_path ? (
@@ -169,7 +169,7 @@ const SinglePerson = async () => {
             className="h-auto w-40 shrink-0 self-start rounded-xl object-cover shadow-md sm:w-48"
           />
         ) : (
-          <div className="flex h-72 w-40 shrink-0 self-start items-center justify-center rounded-xl bg-gray-200 text-center sm:w-48 dark:bg-gray-700">
+          <div className="flex h-72 w-40 shrink-0 items-center justify-center self-start rounded-xl bg-gray-200 text-center sm:w-48 dark:bg-gray-700">
             <span className="px-4 text-sm text-gray-500 dark:text-gray-400">
               No Image Available
             </span>
@@ -177,14 +177,14 @@ const SinglePerson = async () => {
         )}
 
         <div className="space-y-3">
-          <h1 className="text-3xl font-bold">{person.name}</h1>
+          <h2 className="text-3xl font-bold">{person.name}</h2>
 
           {person.imdb_id && (
             <Link
               href={`https://www.imdb.com/name/${person.imdb_id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block text-sm font-medium text-yellow-500 underline-offset-4 hover:underline"
+              className="inline-block text-sm font-medium text-yellow-700 underline-offset-4 hover:underline dark:text-yellow-500"
             >
               View on IMDb
             </Link>
@@ -207,7 +207,7 @@ const SinglePerson = async () => {
       {crewByDepartment.map(([department, movies]) => (
         <MovieList key={department} heading={department} movies={movies} />
       ))}
-    </main>
+    </div>
   );
 };
 

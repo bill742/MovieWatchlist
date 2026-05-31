@@ -54,13 +54,13 @@ const SingleMovie = async () => {
 
   if (!id) {
     return (
-      <main className="container mx-auto p-6">
+      <div className="container mx-auto p-6">
         <h2 className="mb-4 text-2xl font-bold">Movie not found</h2>
         <p>
           The movie you&apos;re looking for doesn&apos;t exist or the URL is
           invalid.
         </p>
-      </main>
+      </div>
     );
   }
 
@@ -68,13 +68,13 @@ const SingleMovie = async () => {
 
   if (!movie) {
     return (
-      <main className="container mx-auto p-6">
+      <div className="container mx-auto p-6">
         <h2 className="mb-4 text-2xl font-bold">Movie not found</h2>
         <p>
           The requested movie could not be found or failed to load from the
           database.
         </p>
-      </main>
+      </div>
     );
   }
 
@@ -229,6 +229,7 @@ const SingleMovie = async () => {
                           profile_path={director.profile_path}
                           name={director.name}
                           id={director.id}
+                          job={`director of ${movie.title}`}
                         />
                       </div>
                     ))}

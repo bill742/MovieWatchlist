@@ -6,6 +6,7 @@ import type { CastAndCrew } from "@/types";
 export function CastAndCrewInfo({
   character,
   id,
+  job,
   name,
   profile_path,
 }: CastAndCrew) {
@@ -14,7 +15,7 @@ export function CastAndCrewInfo({
       {profile_path ? (
         <Image
           src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w200${profile_path}`}
-          alt={name}
+          alt={`${name} - ${job}`}
           width={128}
           height={192}
           className="mb-2 h-auto w-full rounded-md md:w-32"

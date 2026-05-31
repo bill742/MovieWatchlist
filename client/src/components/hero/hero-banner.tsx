@@ -40,9 +40,9 @@ export function HeroBanner({ movie }: HeroBannerProps) {
             <div className="bg-primary text-primary-foreground inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm font-semibold">
               <span>Featured Movie</span>
             </div>
-            <h1 className="text-4xl font-bold text-white md:text-6xl">
+            <h2 className="text-4xl font-bold text-white md:text-6xl">
               {movie.title}
-            </h1>
+            </h2>
             <p className="line-clamp-3 text-lg text-gray-200">
               {movie.overview}
             </p>
