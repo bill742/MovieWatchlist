@@ -241,7 +241,7 @@ const SingleMovie = async () => {
               <div className="space-y-2">
                 <h2 className="text-xl font-semibold">Top Cast</h2>
                 <div className="flex flex-wrap gap-4">
-                  {castAndCrew.cast.slice(0, 6).map((castMember) => (
+                  {castAndCrew.cast.map((castMember) => (
                     <div key={castMember.id} className="w-32">
                       <CastAndCrewInfo
                         profile_path={castMember.profile_path}
