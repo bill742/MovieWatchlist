@@ -1,3 +1,5 @@
+import { ViewTransition } from "react";
+
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Image from "next/image";
@@ -88,6 +90,7 @@ const SingleMovie = async () => {
   const trailerKey = await getMovieTrailer(id);
 
   return (
+    <ViewTransition default="none" enter="slide-up">
     <div className="min-h-screen pb-12">
       {/* Backdrop with gradient */}
       <div className="relative h-[60vh] w-full">
@@ -258,6 +261,7 @@ const SingleMovie = async () => {
         </div>
       </div>
     </div>
+    </ViewTransition>
   );
 };
 

@@ -1,8 +1,4 @@
-import { Suspense } from "react";
-
 import type { Metadata } from "next";
-
-import { Loader } from "@/components/ui/loader";
 
 import ClientSearch from "./client-search";
 
@@ -33,8 +29,8 @@ export async function generateMetadata({
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<Loader message="Loading search results..." />}>
+    <>
       <ClientSearch />
-    </Suspense>
+    </>
   );
 }
