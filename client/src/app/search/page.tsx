@@ -2,9 +2,8 @@ import { Suspense } from "react";
 
 import type { Metadata } from "next";
 
-import { Loader } from "@/components/ui/loader";
-
 import ClientSearch from "./client-search";
+import SkeletonCardList from "@/components/skeletons/skeleton-card-list";
 
 type SearchPageProps = {
   searchParams: Promise<{ term?: string }>;
@@ -33,7 +32,7 @@ export async function generateMetadata({
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<Loader message="Loading search results..." />}>
+    <Suspense fallback={<div className="space-y-12 py-8"><SkeletonCardList /></div>}>
       <ClientSearch />
     </Suspense>
   );

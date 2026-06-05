@@ -21,8 +21,10 @@ export function CastAndCrewInfo({
           className="mb-2 h-auto w-full rounded-md md:w-32"
         />
       ) : (
-        <div className="flex h-48 w-32 items-center justify-center bg-gray-200 text-center">
-          <span className="px-4 text-sm text-gray-500">No Image Available</span>
+        <div className="flex h-48 w-32 items-center justify-center bg-gray-200 text-center dark:bg-gray-700">
+          <span className="px-4 text-sm text-gray-600 dark:text-gray-300">
+            No Image Available
+          </span>
         </div>
       )}
 

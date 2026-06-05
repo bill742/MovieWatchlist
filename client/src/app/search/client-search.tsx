@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ViewTransition, startTransition, useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
 import { MovieList } from "@/components/movies/movie-list";
-import { Loader } from "@/components/ui/loader";
+import SkeletonCardList from "@/components/skeletons/skeleton-card-list";
 
 import { getSearchResults } from "@/data/loaders";
 import type { Movie } from "@/types";
@@ -17,29 +17,41 @@ export default function ClientSearch() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSearchResults = async () => {
-      setLoading(true);
+    setLoading(true);
 
+    const fetchSearchResults = async () => {
       try {
         const searchResultsData = await getSearchResults(term || "");
-        setSearchResults(searchResultsData || []);
+        startTransition(() => {
+          setSearchResults(searchResultsData || []);
+          setLoading(false);
+        });
       } catch {
-        // Silently fail - user sees empty results
-        setSearchResults([]);
-      } finally {
-        setLoading(false);
+        startTransition(() => {
+          setSearchResults([]);
+          setLoading(false);
+        });
       }
     };
+
     fetchSearchResults();
   }, [term]);
 
   if (loading) {
-    return <Loader message="Loading search results..." />;
+    return (
+      <ViewTransition key="skeleton" default="none" exit="slide-down">
+        <div className="space-y-12 py-8">
+          <SkeletonCardList />
+        </div>
+      </ViewTransition>
+    );
   }
 
   return (
-    <div className="space-y-12 py-8">
-      <MovieList movies={searchResults} heading={`Results for "${term}"`} />
-    </div>
+    <ViewTransition enter="slide-up" default="none" key="content">
+      <div className="space-y-12 py-8">
+        <MovieList movies={searchResults} heading={`Results for "${term}"`} />
+      </div>
+    </ViewTransition>
   );
 }

@@ -1,3 +1,5 @@
+import { ViewTransition } from "react";
+
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Image from "next/image";
@@ -157,6 +159,7 @@ const SinglePerson = async () => {
   const crewByDepartment = credits ? groupCrewByDepartment(credits.crew) : [];
 
   return (
+    <ViewTransition default="none" enter="slide-up">
     <div className="container mx-auto space-y-12 py-8">
       {/* Person header */}
       <div className="flex flex-col gap-6 sm:flex-row">
@@ -208,6 +211,7 @@ const SinglePerson = async () => {
         <MovieList key={department} heading={department} movies={movies} />
       ))}
     </div>
+    </ViewTransition>
   );
 };
 
