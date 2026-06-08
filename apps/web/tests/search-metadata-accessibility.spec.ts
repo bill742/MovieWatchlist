@@ -40,7 +40,7 @@ test.describe("Search results page does not have accessibility issues", () => {
 });
 
 test.describe("Page Metadata and Document Structure", () => {
-  test("Verify Search Reesults Page Metadata", async ({ page }) => {
+  test("Verify Search Results Page Metadata", async ({ page }) => {
     await page.goto("./");
 
     await page

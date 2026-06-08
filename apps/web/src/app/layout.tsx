@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Footer from "@/components/footer";
 import { Header } from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { createClient } from "@/lib/supabase/server";
 
 import { RegionProvider } from "@/lib/region-context";
 
@@ -32,11 +33,16 @@ export const metadata: Metadata = {
   title: `${process.env.NEXT_PUBLIC_SITE_NAME} - Track Premiere Dates & Discover Films`,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -49,7 +55,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <RegionProvider>
-            <Header />
+            <Header email={user?.email} />
             <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               {children}
             </main>

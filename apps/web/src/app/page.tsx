@@ -1,5 +1,5 @@
+import { ContentTabs } from "@/components/home/content-tabs";
 import { RegionSelect } from "@/components/header/region-select";
-import { MovieFetcher } from "@/components/movies/movie-fetcher";
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
       <div className="flex flex-row items-center gap-4">
         Select your region: <RegionSelect />
       </div>
-      <MovieFetcher />
+      <ContentTabs />
     </div>
   );
 }
