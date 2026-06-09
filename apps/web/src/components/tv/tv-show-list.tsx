@@ -9,7 +9,7 @@ interface TVShowListProps {
   shows: TVShow[];
 }
 
-export const TVShowList = memo(({ heading, shows }: TVShowListProps) => {
+const TVShowList = memo(({ heading, shows }: TVShowListProps) => {
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between">
@@ -35,3 +35,5 @@ export const TVShowList = memo(({ heading, shows }: TVShowListProps) => {
 });
 
 TVShowList.displayName = "TVShowList";
+
+export { TVShowList };

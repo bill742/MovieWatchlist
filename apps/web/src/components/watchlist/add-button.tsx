@@ -4,7 +4,7 @@ import { useTransition } from "react";
 
 import { BookMarked, BookPlus } from "lucide-react";
 
-import type { MediaType, WatchlistItem } from "@moviewatchlist/shared";
+import type { MediaType, WatchlistItem } from "@/types";
 
 import { addToWatchlist, removeFromWatchlist } from "@/lib/actions/watchlist";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ interface Props {
   tmdbId: number;
 }
 
-export function AddToWatchlistButton({
+function AddToWatchlistButton({
   existingItem,
   isLoggedIn,
   mediaType,
@@ -57,3 +57,7 @@ export function AddToWatchlistButton({
     </Button>
   );
 }
+
+AddToWatchlistButton.displayName = "AddToWatchlistButton";
+
+export { AddToWatchlistButton };

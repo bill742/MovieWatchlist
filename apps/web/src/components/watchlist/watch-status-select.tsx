@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 
-import type { MediaType, WatchStatus } from "@moviewatchlist/shared";
+import type { MediaType, WatchStatus } from "@/types";
 
 import { updateWatchStatus } from "@/lib/actions/watchlist";
 
@@ -19,7 +19,7 @@ interface Props {
   tmdbId: number;
 }
 
-export function WatchStatusSelect({ currentStatus, mediaType, tmdbId }: Props) {
+function WatchStatusSelect({ currentStatus, mediaType, tmdbId }: Props) {
   const [pending, startTransition] = useTransition();
 
   return (
@@ -40,3 +40,7 @@ export function WatchStatusSelect({ currentStatus, mediaType, tmdbId }: Props) {
     </select>
   );
 }
+
+WatchStatusSelect.displayName = "WatchStatusSelect";
+
+export { WatchStatusSelect };

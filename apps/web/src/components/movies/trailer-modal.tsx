@@ -15,7 +15,7 @@ interface TrailerModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function TrailerModal({
+function TrailerModal({
   movieTitle,
   onOpenChange,
   open,
@@ -46,3 +46,7 @@ export function TrailerModal({
     </Dialog>
   );
 }
+
+TrailerModal.displayName = "TrailerModal";
+
+export { TrailerModal };

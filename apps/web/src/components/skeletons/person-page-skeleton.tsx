@@ -1,4 +1,4 @@
-import SkeletonCardList from "./skeleton-card-list";
+import { SkeletonCardList } from "./skeleton-card-list";
 
 const PersonPageSkeleton = () => (
   <div className="container mx-auto space-y-12 py-8">
@@ -26,4 +26,4 @@ const PersonPageSkeleton = () => (
 
 PersonPageSkeleton.displayName = "PersonPageSkeleton";
 
-export default PersonPageSkeleton;
+export { PersonPageSkeleton };

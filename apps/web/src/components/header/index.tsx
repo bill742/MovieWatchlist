@@ -21,7 +21,7 @@ interface HeaderProps {
   email?: string | null;
 }
 
-export function Header({ email }: HeaderProps = {}) {
+function Header({ email }: HeaderProps = {}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -59,3 +59,7 @@ export function Header({ email }: HeaderProps = {}) {
     </header>
   );
 }
+
+Header.displayName = "Header";
+
+export { Header };

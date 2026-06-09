@@ -10,7 +10,7 @@ import {
 
 import { useRegion } from "@/lib/region-context";
 
-export function RegionSelect() {
+function RegionSelect() {
   const { region, setRegion } = useRegion();
 
   const regionOptions = [
@@ -51,3 +51,7 @@ export function RegionSelect() {
     </DropdownMenu>
   );
 }
+
+RegionSelect.displayName = "RegionSelect";
+
+export { RegionSelect };

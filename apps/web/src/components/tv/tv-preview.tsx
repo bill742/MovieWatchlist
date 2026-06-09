@@ -1,7 +1,7 @@
 import { MediaCard } from "@/components/media/media-card";
 import type { TVShow } from "@/types";
 
-export function TVPreview({ show }: { show: TVShow }) {
+function TVPreview({ show }: { show: TVShow }) {
   return (
     <MediaCard
       item={{
@@ -15,3 +15,7 @@ export function TVPreview({ show }: { show: TVShow }) {
     />
   );
 }
+
+TVPreview.displayName = "TVPreview";
+
+export { TVPreview };

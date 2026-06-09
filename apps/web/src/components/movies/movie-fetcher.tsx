@@ -14,10 +14,10 @@ import {
 import { useRegion } from "@/lib/region-context";
 import type { FeaturedItem, Movie } from "@/types";
 
-import MediaListSkeleton from "../skeletons/media-list-skeleton";
+import { MediaListSkeleton } from "../skeletons/media-list-skeleton";
 import { MovieList } from "./movie-list";
 
-export function MovieFetcher() {
+function MovieFetcher() {
   const { region } = useRegion();
   const [featured, setFeatured] = useState<{
     item: FeaturedItem;
@@ -100,3 +100,7 @@ export function MovieFetcher() {
     </ViewTransition>
   );
 }
+
+MovieFetcher.displayName = "MovieFetcher";
+
+export { MovieFetcher };

@@ -5,12 +5,12 @@ import { ViewTransition, startTransition, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { MovieList } from "@/components/movies/movie-list";
-import SkeletonCardList from "@/components/skeletons/skeleton-card-list";
+import { SkeletonCardList } from "@/components/skeletons/skeleton-card-list";
 
 import { getSearchResults } from "@/data/loaders";
 import type { Movie } from "@/types";
 
-export default function ClientSearch() {
+function ClientSearch() {
   const searchParams = useSearchParams();
   const term = searchParams.get("term");
   const [searchResults, setSearchResults] = useState<Movie[]>([]);
@@ -55,3 +55,7 @@ export default function ClientSearch() {
     </ViewTransition>
   );
 }
+
+ClientSearch.displayName = "ClientSearch";
+
+export { ClientSearch };

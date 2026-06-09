@@ -12,7 +12,7 @@ interface SearchProps {
   onSubmit?: () => void;
 }
 
-export function Search({ onSubmit }: SearchProps = {}) {
+function Search({ onSubmit }: SearchProps = {}) {
   const [term, setTerm] = useState("");
   const router = useRouter();
 
@@ -58,3 +58,7 @@ export function Search({ onSubmit }: SearchProps = {}) {
     </div>
   );
 }
+
+Search.displayName = "Search";
+
+export { Search };

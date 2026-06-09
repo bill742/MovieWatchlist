@@ -9,7 +9,7 @@ import { TVFetcher } from "@/components/tv/tv-fetcher";
 
 type Tab = "movies" | "tv";
 
-export function ContentTabs() {
+function ContentTabs() {
   const [activeTab, setActiveTab] = useState<Tab>("movies");
 
   return (
@@ -60,3 +60,7 @@ function TabButton({
     </button>
   );
 }
+
+ContentTabs.displayName = "ContentTabs";
+
+export { ContentTabs };

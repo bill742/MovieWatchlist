@@ -17,7 +17,7 @@ interface EpisodeListProps {
   watchedEpisodes: number[];
 }
 
-export function EpisodeList({
+function EpisodeList({
   episodes,
   isLoggedIn,
   seasonNumber,
@@ -124,3 +124,7 @@ export function EpisodeList({
     </div>
   );
 }
+
+EpisodeList.displayName = "EpisodeList";
+
+export { EpisodeList };

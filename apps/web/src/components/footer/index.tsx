@@ -1,4 +1,4 @@
-export default function Footer() {
+function Footer() {
   return (
     <footer className="bg-background/50 text-muted-foreground border-t px-4 py-6 text-center text-sm">
       {/* <p>
@@ -7,3 +7,7 @@ export default function Footer() {
     </footer>
   );
 }
+
+Footer.displayName = "Footer";
+
+export { Footer };

@@ -6,7 +6,7 @@ import type { RegionContextType } from "@/types";
 
 const RegionContext = createContext<RegionContextType | undefined>(undefined);
 
-export function RegionProvider({ children }: { children: ReactNode }) {
+function RegionProvider({ children }: { children: ReactNode }) {
   const [region, setRegion] = useState("US");
 
   return (
@@ -16,10 +16,14 @@ export function RegionProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useRegion() {
+function useRegion() {
   const context = useContext(RegionContext);
   if (context === undefined) {
     throw new Error("useRegion must be used within a RegionProvider");
   }
   return context;
 }
+
+RegionProvider.displayName = "RegionProvider";
+
+export { RegionProvider, useRegion };

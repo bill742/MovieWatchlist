@@ -15,7 +15,7 @@ interface TrailerButtonProps {
   size?: "default" | "sm" | "lg";
 }
 
-export function TrailerButton({
+function TrailerButton({
   movieTitle,
   size = "lg",
   trailerKey,
@@ -44,3 +44,7 @@ export function TrailerButton({
     </>
   );
 }
+
+TrailerButton.displayName = "TrailerButton";
+
+export { TrailerButton };

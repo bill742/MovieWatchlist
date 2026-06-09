@@ -10,7 +10,7 @@ interface Props {
   item: MediaCardItem;
 }
 
-export function MediaCard({ item }: Props) {
+function MediaCard({ item }: Props) {
   const href = item.media_type === "tv" ? `/tv/${item.id}` : `/movies/${item.id}`;
 
   return (
@@ -61,3 +61,7 @@ export function MediaCard({ item }: Props) {
     </Link>
   );
 }
+
+MediaCard.displayName = "MediaCard";
+
+export { MediaCard };

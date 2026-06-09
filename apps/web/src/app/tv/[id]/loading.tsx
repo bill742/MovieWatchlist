@@ -1,6 +1,6 @@
 import { ViewTransition } from "react";
 
-import MoviePageSkeleton from "@/components/skeletons/movie-page-skeleton";
+import { MoviePageSkeleton } from "@/components/skeletons/movie-page-skeleton";
 
 export default function Loading() {
   return (

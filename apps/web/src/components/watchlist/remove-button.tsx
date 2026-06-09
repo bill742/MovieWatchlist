@@ -4,7 +4,7 @@ import { useTransition } from "react";
 
 import { X } from "lucide-react";
 
-import type { MediaType } from "@moviewatchlist/shared";
+import type { MediaType } from "@/types";
 
 import { removeFromWatchlist } from "@/lib/actions/watchlist";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ interface Props {
   tmdbId: number;
 }
 
-export function RemoveFromWatchlistButton({ mediaType, tmdbId }: Props) {
+function RemoveFromWatchlistButton({ mediaType, tmdbId }: Props) {
   const [pending, startTransition] = useTransition();
 
   return (
@@ -29,3 +29,7 @@ export function RemoveFromWatchlistButton({ mediaType, tmdbId }: Props) {
     </Button>
   );
 }
+
+RemoveFromWatchlistButton.displayName = "RemoveFromWatchlistButton";
+
+export { RemoveFromWatchlistButton };

@@ -7,7 +7,7 @@ interface HeaderContentProps {
   onSearchSubmit?: () => void;
 }
 
-export function HeaderContent({ email, onSearchSubmit }: HeaderContentProps = {}) {
+function HeaderContent({ email, onSearchSubmit }: HeaderContentProps = {}) {
   return (
     <>
       <Search onSubmit={onSearchSubmit} />
@@ -16,3 +16,7 @@ export function HeaderContent({ email, onSearchSubmit }: HeaderContentProps = {}
     </>
   );
 }
+
+HeaderContent.displayName = "HeaderContent";
+
+export { HeaderContent };

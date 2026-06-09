@@ -7,7 +7,7 @@ interface Props {
   next?: string;
 }
 
-export function OAuthButtons({ next }: Props) {
+function OAuthButtons({ next }: Props) {
   const supabase = createClient();
 
   const signInWith = async (provider: "google" | "apple") => {
@@ -88,3 +88,7 @@ function AppleIcon() {
     </svg>
   );
 }
+
+OAuthButtons.displayName = "OAuthButtons";
+
+export { OAuthButtons };

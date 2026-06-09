@@ -19,7 +19,7 @@ interface Props {
   email: string | null;
 }
 
-export function UserMenu({ email }: Props) {
+function UserMenu({ email }: Props) {
   const [pending, startTransition] = useTransition();
 
   if (!email) {
@@ -70,3 +70,7 @@ export function UserMenu({ email }: Props) {
     </DropdownMenu>
   );
 }
+
+UserMenu.displayName = "UserMenu";
+
+export { UserMenu };

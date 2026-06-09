@@ -3,7 +3,7 @@
 import { ViewTransition, startTransition, useEffect, useState } from "react";
 
 import { HeroBanner } from "@/components/hero/hero-banner";
-import MediaListSkeleton from "@/components/skeletons/media-list-skeleton";
+import { MediaListSkeleton } from "@/components/skeletons/media-list-skeleton";
 
 import {
   getOnTheAirTV,
@@ -16,7 +16,7 @@ import type { FeaturedItem, TVShow } from "@/types";
 
 import { TVShowList } from "./tv-show-list";
 
-export function TVFetcher() {
+function TVFetcher() {
   const { region } = useRegion();
   const [featured, setFeatured] = useState<{
     item: FeaturedItem;
@@ -93,3 +93,7 @@ export function TVFetcher() {
     </ViewTransition>
   );
 }
+
+TVFetcher.displayName = "TVFetcher";
+
+export { TVFetcher };

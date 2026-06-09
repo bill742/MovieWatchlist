@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { FREE_WATCHLIST_LIMIT, type MediaType, type WatchStatus } from "@moviewatchlist/shared";
+import { FREE_WATCHLIST_LIMIT, type MediaType, type WatchStatus } from "@/types";
 
 import { createClient } from "@/lib/supabase/server";
 

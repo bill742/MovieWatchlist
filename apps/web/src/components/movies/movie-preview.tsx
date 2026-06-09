@@ -1,7 +1,7 @@
 import { MediaCard } from "@/components/media/media-card";
 import type { MoviePreviewProps } from "@/types";
 
-export function MoviePreview({ movie }: MoviePreviewProps) {
+function MoviePreview({ movie }: MoviePreviewProps) {
   return (
     <MediaCard
       item={{
@@ -15,3 +15,7 @@ export function MoviePreview({ movie }: MoviePreviewProps) {
     />
   );
 }
+
+MoviePreview.displayName = "MoviePreview";
+
+export { MoviePreview };

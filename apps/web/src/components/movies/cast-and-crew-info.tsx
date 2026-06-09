@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import type { CastAndCrew } from "@/types";
 
-export function CastAndCrewInfo({
+function CastAndCrewInfo({
   character,
   id,
   job,
@@ -38,3 +38,7 @@ export function CastAndCrewInfo({
     </Link>
   );
 }
+
+CastAndCrewInfo.displayName = "CastAndCrewInfo";
+
+export { CastAndCrewInfo };

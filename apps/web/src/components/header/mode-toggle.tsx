@@ -14,7 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export function ModeToggle() {
+function ModeToggle() {
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -56,3 +56,7 @@ export function ModeToggle() {
     </TooltipProvider>
   );
 }
+
+ModeToggle.displayName = "ModeToggle";
+
+export { ModeToggle };

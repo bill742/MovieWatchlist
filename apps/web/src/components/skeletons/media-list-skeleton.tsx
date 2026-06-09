@@ -1,4 +1,4 @@
-import SkeletonCardList from "./skeleton-card-list";
+import { SkeletonCardList } from "./skeleton-card-list";
 
 const SkeletonSection = () => (
   <section className="space-y-6">
@@ -16,4 +16,4 @@ const MediaListSkeleton = () => (
 
 MediaListSkeleton.displayName = "MediaListSkeleton";
 
-export default MediaListSkeleton;
+export { MediaListSkeleton };

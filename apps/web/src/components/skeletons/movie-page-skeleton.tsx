@@ -73,4 +73,4 @@ const MoviePageSkeleton = () => (
 
 MoviePageSkeleton.displayName = "MoviePageSkeleton";
 
-export default MoviePageSkeleton;
+export { MoviePageSkeleton };

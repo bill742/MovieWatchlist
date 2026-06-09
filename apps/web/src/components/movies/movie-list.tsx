@@ -4,7 +4,7 @@ import type { MovieListProps } from "@/types";
 
 import { MoviePreview } from "./movie-preview";
 
-export const MovieList = memo(({ heading, movies }: MovieListProps) => {
+const MovieList = memo(({ heading, movies }: MovieListProps) => {
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between">
@@ -30,3 +30,5 @@ export const MovieList = memo(({ heading, movies }: MovieListProps) => {
 });
 
 MovieList.displayName = "MovieList";
+
+export { MovieList };

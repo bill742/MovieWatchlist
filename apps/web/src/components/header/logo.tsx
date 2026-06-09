@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Film } from "lucide-react";
 
-export function Logo() {
+function Logo() {
   return (
     <Link
       href="/"
@@ -17,3 +17,7 @@ export function Logo() {
     </Link>
   );
 }
+
+Logo.displayName = "Logo";
+
+export { Logo };

@@ -1,6 +1,6 @@
 import { ViewTransition } from "react";
 
-import PersonPageSkeleton from "@/components/skeletons/person-page-skeleton";
+import { PersonPageSkeleton } from "@/components/skeletons/person-page-skeleton";
 
 export default function Loading() {
   return (

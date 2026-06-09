@@ -22,4 +22,4 @@ const SkeletonCardList = () => (
 
 SkeletonCardList.displayName = "SkeletonCardList";
 
-export default SkeletonCardList;
+export { SkeletonCardList };

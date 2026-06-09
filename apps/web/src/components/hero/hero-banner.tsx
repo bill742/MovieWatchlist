@@ -16,7 +16,7 @@ interface HeroBannerProps {
   trailerKey?: string | null;
 }
 
-export function HeroBanner({ item, trailerKey }: HeroBannerProps) {
+function HeroBanner({ item, trailerKey }: HeroBannerProps) {
   const [showTrailer, setShowTrailer] = useState(false);
   const detailHref =
     item.media_type === "tv" ? `/tv/${item.id}` : `/movies/${item.id}`;
@@ -80,3 +80,7 @@ export function HeroBanner({ item, trailerKey }: HeroBannerProps) {
     </>
   );
 }
+
+HeroBanner.displayName = "HeroBanner";
+
+export { HeroBanner };

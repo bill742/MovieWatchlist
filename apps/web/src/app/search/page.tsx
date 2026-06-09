@@ -2,8 +2,8 @@ import { Suspense } from "react";
 
 import type { Metadata } from "next";
 
-import ClientSearch from "./client-search";
-import SkeletonCardList from "@/components/skeletons/skeleton-card-list";
+import { ClientSearch } from "./client-search";
+import { SkeletonCardList } from "@/components/skeletons/skeleton-card-list";
 
 type SearchPageProps = {
   searchParams: Promise<{ term?: string }>;

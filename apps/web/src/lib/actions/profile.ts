@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import type { Theme } from "@moviewatchlist/shared";
+import type { Theme } from "@/types";
 
 import { createClient } from "@/lib/supabase/server";
 
