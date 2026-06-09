@@ -1,5 +1,5 @@
 {
-  "name": "movie-app-frontend",
+  "name": "@moviewatchlist/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,11 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@moviewatchlist/shared": "workspace:*",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.108.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "eslint-plugin-prettier": "^5.5.4",

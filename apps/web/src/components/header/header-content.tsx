@@ -1,15 +1,18 @@
 import { ModeToggle } from "./mode-toggle";
 import { Search } from "./search";
+import { UserMenu } from "./user-menu";
 
 interface HeaderContentProps {
+  email?: string | null;
   onSearchSubmit?: () => void;
 }
 
-export function HeaderContent({ onSearchSubmit }: HeaderContentProps = {}) {
+export function HeaderContent({ email, onSearchSubmit }: HeaderContentProps = {}) {
   return (
     <>
       <Search onSubmit={onSearchSubmit} />
       <ModeToggle />
+      <UserMenu email={email ?? null} />
     </>
   );
 }
