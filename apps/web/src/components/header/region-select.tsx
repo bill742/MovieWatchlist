@@ -27,7 +27,7 @@ export function RegionSelect() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="flex min-w-[80px] items-center gap-2 px-3 py-2 text-sm font-medium"
+          className="flex min-w-20 items-center gap-2 px-3 py-2 text-sm font-medium"
           aria-label="Select region"
         >
           <span className="text-lg">
@@ -36,7 +36,7 @@ export function RegionSelect() {
           <span>{region}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[120px]">
+      <DropdownMenuContent align="end" className="min-w-30">
         {regionOptions.map((option) => (
           <DropdownMenuItem
             key={option.value}
