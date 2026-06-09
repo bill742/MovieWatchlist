@@ -8,8 +8,8 @@ import { updateWatchStatus } from "@/lib/actions/watchlist";
 
 const STATUS_LABELS: Record<WatchStatus, string> = {
   dropped: "Dropped",
-  watched: "Watched",
   want_to_watch: "Want to watch",
+  watched: "Watched",
   watching: "Watching",
 };
 

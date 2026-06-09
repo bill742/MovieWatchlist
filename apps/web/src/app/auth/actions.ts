@@ -15,7 +15,9 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}&next=${encodeURIComponent(next)}`);
+    redirect(
+      `/login?error=${encodeURIComponent(error.message)}&next=${encodeURIComponent(next)}`
+    );
   }
 
   revalidatePath("/", "layout");
@@ -30,10 +32,10 @@ export async function signup(formData: FormData) {
 
   const { error } = await supabase.auth.signUp({
     email,
-    password,
     options: {
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
     },
+    password,
   });
 
   if (error) {
