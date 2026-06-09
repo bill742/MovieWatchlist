@@ -4,5 +4,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "cSpell.words": ["TMDB", "trivago", "Watchlist", "IMDB"]
+  "cSpell.words": ["IMDB", "plpgsql", "TMDB", "trivago", "Watchlist"]
 }
