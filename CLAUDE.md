@@ -13,8 +13,10 @@ free/premium feature split.
 
 ## Monorepo layout
 
-This is a **Turborepo + pnpm workspaces** monorepo (`pnpm@10.33.2`). Do not assume
-a single Next.js app at the root.
+This is a **Turborepo + pnpm workspaces** monorepo (`pnpm@10.33.2`, pinned via
+`packageManager`). Do not assume a single Next.js app at the root. Node is pinned to
+**22.17.0** in `.node-version` (honored by fnm/nodenv/asdf — plain `nvm` users should
+mirror it in their own setup).
 
 ```
 MovieWatchlist/
@@ -174,6 +176,13 @@ Defined in `apps/web/.env` (see `.env.example`):
   Prefer named exports over default exports. Always set
   `ComponentName.displayName = "ComponentName"` (not just for `memo`/`forwardRef`
   wrappers) so components are identifiable in React DevTools and error traces.
+
+  **Exception — Next.js route-segment files** (`page.tsx`, `layout.tsx`,
+  `loading.tsx`, `not-found.tsx`, `error.tsx`, `route.ts`, etc.) **must use
+  `export default`** per App Router requirements; the named-export rule does not
+  apply there (`displayName` is also unnecessary since they aren't reused).
+  `components/ui/**` is generated shadcn code and is exempt from these conventions
+  (it is also excluded from linting).
 - **Hydration:** root `<html>` has `suppressHydrationWarning` for theming; use a
   `mounted` gate for theme-dependent client rendering.
 - **Loading:** use the shared `Loader` component (`@/components/ui/loader`) and route
