@@ -4,12 +4,15 @@ Guidance for Claude Code when working in this repository.
 
 ## What this is
 
-MovieWatchlist is a cross-platform product (web now; mobile planned) for browsing
+MovieWatchlist is a cross-platform product (web + mobile) for browsing
 TMDB movie/TV data, tracking a personal watchlist, and marking episodes watched.
 It is being built out per `PLAN.md` — **Phases 1 and 2 are complete** (monorepo,
-Supabase auth + database, watchlist, TV shows). Mobile (Expo), payments, and Trakt
-sync are future phases. Read `PLAN.md` for the roadmap, schema rationale, and the
-free/premium feature split.
+Supabase auth + database, watchlist, TV shows). **Phase 3 (Expo mobile app) is in
+progress**: the foundation slice is done — scaffolded Expo app with auth and a browse
+screen sharing the Supabase project and TMDB client with web; the rest of Phase 3
+(full TV/search/episode screens, push notifications, EAS Build/store submission) is
+outstanding. Payments and Trakt sync are future phases. Read `PLAN.md` for the
+roadmap, schema rationale, and the free/premium feature split.
 
 ## Monorepo layout
 
@@ -21,9 +24,10 @@ mirror it in their own setup).
 ```
 MovieWatchlist/
 ├── apps/
-│   └── web/                  # Next.js 16 web app (@moviewatchlist/web)
+│   ├── web/                  # Next.js 16 web app (@moviewatchlist/web)
+│   └── mobile/               # Expo SDK 56 app (@moviewatchlist/mobile)
 ├── packages/
-│   └── shared/              # @moviewatchlist/shared — TS types + shared constants
+│   └── shared/              # @moviewatchlist/shared — TS types, constants, TMDB client
 ├── supabase/
 │   └── migrations/          # SQL schema (RLS policies, triggers)
 ├── turbo.json               # task pipeline (build, lint, dev)
@@ -31,13 +35,24 @@ MovieWatchlist/
 └── PLAN.md                  # expansion roadmap
 ```
 
-`packages/shared` currently exports domain types (`Movie`, `TVShow`, `Profile`,
-`WatchlistItem`, `MediaType`, `WatchStatus`, …) and constants (e.g.
-`FREE_WATCHLIST_LIMIT`). The web app re-exports it from `apps/web/src/types.ts`
+> **React Native needs a flat node_modules.** The root `.npmrc` sets
+> `node-linker=hoisted`, and root `package.json` pins `react`/`react-dom` to `19.2.3`
+> (the Expo SDK 56 / RN 0.85 tested version; web's `^19.0.0` is satisfied by it) via
+> `pnpm.overrides` so the hoisted layout has exactly one React. Leave these in place —
+> Metro breaks under pnpm's default symlinked layout or with duplicate React copies.
+
+`packages/shared` exports domain types (`Movie`, `TVShow`, `Profile`,
+`WatchlistItem`, `MediaType`, `WatchStatus`, …), constants (e.g.
+`FREE_WATCHLIST_LIMIT`), and a **framework-agnostic TMDB client**
+(`createTmdbClient({ baseUrl, bearerToken, imageBase })` in `src/tmdb/client.ts`) — no
+React `cache()`, no `process.env` reads, so both apps can wire their own env vars. The
+web app re-exports shared from `apps/web/src/types.ts`
 (`export * from "@moviewatchlist/shared"`), so **`@/types` and `@moviewatchlist/shared`
-are the same module.** Inside the web app, import from `@/types`; in code meant to
-be shared with future apps (mobile), import from `@moviewatchlist/shared` directly.
-New domain types shared across apps go in `packages/shared/src/types.ts`.
+are the same module.** Inside the web app, import from `@/types`; in mobile (and
+shared code) import from `@moviewatchlist/shared` directly. New shared domain types go
+in `packages/shared/src/types.ts`. (The web app still has its own `cache()`-wrapped
+loaders in `src/data/*loaders.ts`; deduplicating them onto the shared client is
+deferred, not done.)
 
 ## Commands
 
@@ -54,7 +69,37 @@ Scoped to the web app:
 - `pnpm --filter @moviewatchlist/web lint` — `eslint`
 - `pnpm --filter @moviewatchlist/web exec playwright test` — E2E + a11y tests
 
+Scoped to the mobile app:
+
+- `pnpm --filter @moviewatchlist/mobile dev` — Expo dev server (`expo start`)
+- `pnpm --filter @moviewatchlist/mobile lint` — `expo lint`
+- `pnpm --filter @moviewatchlist/mobile exec tsc --noEmit` — type-check
+- `pnpm --filter @moviewatchlist/mobile exec expo export --platform ios` — full bundle
+  check (compiles everything without a simulator)
+- `pnpm dlx expo-doctor@latest` (from `apps/mobile`) — environment/config checks
+
 `packages/shared`'s `lint` script is `tsc --noEmit` (type-check only).
+
+## Mobile app (Expo)
+
+`apps/mobile` is an **Expo SDK 56** app (Expo Router, React 19.2, RN 0.85,
+TypeScript). Read the versioned docs at <https://docs.expo.dev/versions/v56.0.0/> —
+Expo changes fast. Key facts:
+
+- **Routing:** Expo Router with `src/app` as the route root. Auth gating lives in
+  `src/app/_layout.tsx` (redirects between the `(auth)` and `(app)` route groups based
+  on Supabase session). Route files use `export default` (Expo Router requirement).
+- **Styling:** **NativeWind v4.2** (Tailwind **v3** — not v4 like web). Config in
+  `babel.config.js` (`jsxImportSource: "nativewind"` + `nativewind/babel`),
+  `metro.config.js` (`withNativeWind`, monorepo `watchFolders`/`nodeModulesPaths`),
+  `tailwind.config.js`, and `src/global.css`. Use `className` on RN core components;
+  third-party components (e.g. `expo-image`) need explicit `style` or a `cssInterop`
+  registration — `className` isn't auto-applied to them.
+- **Auth/data:** `src/lib/supabase.ts` (supabase-js + AsyncStorage, `EXPO_PUBLIC_*`
+  env), `src/lib/auth-context.tsx` (`AuthProvider`/`useAuth`), `src/lib/tmdb.ts`
+  (shared TMDB client wired to `EXPO_PUBLIC_TMDB_*`). Env vars must be `EXPO_PUBLIC_`
+  prefixed; copy values from `apps/web/.env` into `apps/mobile/.env` (same Supabase
+  project = shared accounts). See `apps/mobile/.env.example`.
 
 ## Web app tech stack
 
