@@ -6,7 +6,7 @@ const SkeletonSection = () => (
   </section>
 );
 
-const MovieListSkeleton = () => (
+const MediaListSkeleton = () => (
   <section className="space-y-16">
     <div className="h-125 w-full animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
     <SkeletonSection />
@@ -14,6 +14,6 @@ const MovieListSkeleton = () => (
   </section>
 );
 
-MovieListSkeleton.displayName = "MovieListSkeleton";
+MediaListSkeleton.displayName = "MediaListSkeleton";
 
-export default MovieListSkeleton;
+export default MediaListSkeleton;

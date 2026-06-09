@@ -3,9 +3,14 @@
 import { ViewTransition, startTransition, useEffect, useState } from "react";
 
 import { HeroBanner } from "@/components/hero/hero-banner";
-import MovieListSkeleton from "@/components/skeletons/movie-list-skeleton";
+import MediaListSkeleton from "@/components/skeletons/media-list-skeleton";
 
-import { getOnTheAirTV, getTrendingTV, getTVShow, getTVTrailer } from "@/data/tv-loaders";
+import {
+  getOnTheAirTV,
+  getTVShow,
+  getTVTrailer,
+  getTrendingTV,
+} from "@/data/tv-loaders";
 import { useRegion } from "@/lib/region-context";
 import type { FeaturedItem, TVShow } from "@/types";
 
@@ -13,7 +18,10 @@ import { TVShowList } from "./tv-show-list";
 
 export function TVFetcher() {
   const { region } = useRegion();
-  const [featured, setFeatured] = useState<{ item: FeaturedItem; trailerKey: string | null } | null>(null);
+  const [featured, setFeatured] = useState<{
+    item: FeaturedItem;
+    trailerKey: string | null;
+  } | null>(null);
   const [trendingShows, setTrendingShows] = useState<TVShow[]>([]);
   const [onTheAirShows, setOnTheAirShows] = useState<TVShow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +76,7 @@ export function TVFetcher() {
   if (loading) {
     return (
       <ViewTransition key="tv-skeleton" default="none" exit="slide-down">
-        <MovieListSkeleton />
+        <MediaListSkeleton />
       </ViewTransition>
     );
   }

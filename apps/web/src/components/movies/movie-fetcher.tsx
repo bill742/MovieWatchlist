@@ -14,12 +14,15 @@ import {
 import { useRegion } from "@/lib/region-context";
 import type { FeaturedItem, Movie } from "@/types";
 
-import MovieListSkeleton from "../skeletons/movie-list-skeleton";
+import MediaListSkeleton from "../skeletons/media-list-skeleton";
 import { MovieList } from "./movie-list";
 
 export function MovieFetcher() {
   const { region } = useRegion();
-  const [featured, setFeatured] = useState<{ item: FeaturedItem; trailerKey: string | null } | null>(null);
+  const [featured, setFeatured] = useState<{
+    item: FeaturedItem;
+    trailerKey: string | null;
+  } | null>(null);
   const [nowPlayingMovies, setNowPlayingMovies] = useState<Movie[]>([]);
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +38,8 @@ export function MovieFetcher() {
           getUpcomingMovies(region),
         ]);
 
-        if (!nowPlayingData) throw new Error("Failed to fetch now playing movies");
+        if (!nowPlayingData)
+          throw new Error("Failed to fetch now playing movies");
         if (!upcomingData) throw new Error("Failed to fetch upcoming movies");
 
         let featuredResult: typeof featured = null;
@@ -79,7 +83,7 @@ export function MovieFetcher() {
   if (loading) {
     return (
       <ViewTransition key="skeleton" default="none" exit="slide-down">
-        <MovieListSkeleton />
+        <MediaListSkeleton />
       </ViewTransition>
     );
   }
