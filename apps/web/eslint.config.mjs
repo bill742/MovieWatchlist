@@ -43,6 +43,13 @@ export default defineConfig([
     },
     rules: {
       "no-console": ["warn", { allow: ["warn", "error"] }],
+      "no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
       "prefer-arrow-callback": ["error"],
       // Import sorting is handled by Prettier (@trivago/prettier-plugin-sort-imports)
       "simple-import-sort/imports": "off",
