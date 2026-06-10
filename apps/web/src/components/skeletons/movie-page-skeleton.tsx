@@ -7,11 +7,8 @@ const PersonCard = () => (
 
 const MoviePageSkeleton = () => (
   <div className="min-h-screen pb-12">
-    {/* Backdrop */}
-    <div className="relative h-[60vh] w-full animate-pulse bg-gray-200 dark:bg-gray-700" />
-
     {/* Content */}
-    <div className="relative container -mt-48 space-y-8">
+    <div className="relative container mt-89 space-y-8">
       <div className="flex flex-col gap-8 md:flex-row">
         {/* Poster */}
         <div className="shrink-0">
