@@ -8,11 +8,12 @@ MovieWatchlist is a cross-platform product (web + mobile) for browsing
 TMDB movie/TV data, tracking a personal watchlist, and marking episodes watched.
 It is being built out per `PLAN.md` — **Phases 1 and 2 are complete** (monorepo,
 Supabase auth + database, watchlist, TV shows). **Phase 3 (Expo mobile app) is in
-progress**: the foundation slice is done — scaffolded Expo app with auth and a browse
-screen sharing the Supabase project and TMDB client with web; the rest of Phase 3
-(full TV/search/episode screens, push notifications, EAS Build/store submission) is
-outstanding. Payments and Trakt sync are future phases. Read `PLAN.md` for the
-roadmap, schema rationale, and the free/premium feature split.
+progress**: the core app is built — auth plus a tabbed app (browse / search /
+watchlist), movie & TV detail screens, and season/episode tracking, all sharing the
+Supabase project and TMDB client with web (PLAN.md Phase 3 items 1–5). Still
+outstanding: push notifications and EAS Build/store submission (items 6–7). Payments
+and Trakt sync are future phases. Read `PLAN.md` for the roadmap, schema rationale, and
+the free/premium feature split.
 
 ## Monorepo layout
 
@@ -88,7 +89,11 @@ Expo changes fast. Key facts:
 
 - **Routing:** Expo Router with `src/app` as the route root. Auth gating lives in
   `src/app/_layout.tsx` (redirects between the `(auth)` and `(app)` route groups based
-  on Supabase session). Route files use `export default` (Expo Router requirement).
+  on Supabase session). The `(app)` group is a Stack: `(app)/(tabs)` holds the
+  Browse / Search / Watchlist tabs, and detail screens push over them
+  (`(app)/movie/[id]`, `(app)/tv/[id]`, `(app)/tv/[id]/season/[season]`). Route files
+  use `export default` (Expo Router requirement); detail screens set their own header
+  via `<Stack.Screen options={{ ... }} />` rendered inside the screen.
 - **Styling:** **NativeWind v4.2** (Tailwind **v3** — not v4 like web). Config in
   `babel.config.js` (`jsxImportSource: "nativewind"` + `nativewind/babel`),
   `metro.config.js` (`withNativeWind`, monorepo `watchFolders`/`nodeModulesPaths`),
@@ -97,9 +102,15 @@ Expo changes fast. Key facts:
   registration — `className` isn't auto-applied to them.
 - **Auth/data:** `src/lib/supabase.ts` (supabase-js + AsyncStorage, `EXPO_PUBLIC_*`
   env), `src/lib/auth-context.tsx` (`AuthProvider`/`useAuth`), `src/lib/tmdb.ts`
-  (shared TMDB client wired to `EXPO_PUBLIC_TMDB_*`). Env vars must be `EXPO_PUBLIC_`
-  prefixed; copy values from `apps/web/.env` into `apps/mobile/.env` (same Supabase
-  project = shared accounts). See `apps/mobile/.env.example`.
+  (shared TMDB client wired to `EXPO_PUBLIC_TMDB_*`). User-data writes are plain
+  client-side helpers — `src/lib/watchlist.ts` and `src/lib/episodes.ts` call the
+  mobile Supabase client directly (RLS scopes rows; they mirror the web server actions
+  but throw instead of `revalidatePath`). Env vars must be `EXPO_PUBLIC_` prefixed; copy
+  values from `apps/web/.env` into `apps/mobile/.env` (same Supabase project = shared
+  accounts). See `apps/mobile/.env.example`.
+- **TMDB reads:** the shared `createTmdbClient` (`packages/shared/src/tmdb/client.ts`)
+  is the single source for both apps — it now covers movies, TV, season detail, credits,
+  and multi-search. Add new TMDB endpoints there, not in app-local code.
 
 ## Web app tech stack
 

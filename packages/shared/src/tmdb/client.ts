@@ -1,4 +1,10 @@
-import type { Movie } from "../types";
+import type {
+  CastAndCrew,
+  Movie,
+  MultiSearchItem,
+  TVSeason,
+  TVShow,
+} from "../types";
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
@@ -61,6 +67,12 @@ export function createTmdbClient({
       return fetchApi<Movie>(`${baseUrl}/movie/${id}?language=en-US`);
     },
 
+    getMovieCredits(
+      id: number | string,
+    ): Promise<{ cast: CastAndCrew[]; crew: CastAndCrew[] } | null> {
+      return fetchApi(`${baseUrl}/movie/${id}/credits?language=en-US`);
+    },
+
     getNowPlayingMovies(region: string): Promise<Movie[] | null> {
       return fetchApiList<Movie>(
         `${baseUrl}/movie/now_playing?language=en-US&page=1&region=${region}`,
@@ -69,6 +81,47 @@ export function createTmdbClient({
 
     getTrendingMovies(): Promise<Movie[] | null> {
       return fetchApiList<Movie>(`${baseUrl}/trending/movie/week?language=en-US`);
+    },
+
+    // ─── TV ─────────────────────────────────────────────────────────────────
+
+    getTrendingTV(): Promise<TVShow[] | null> {
+      return fetchApiList<TVShow>(`${baseUrl}/trending/tv/week?language=en-US`);
+    },
+
+    getOnTheAirTV(region: string): Promise<TVShow[] | null> {
+      return fetchApiList<TVShow>(
+        `${baseUrl}/tv/on_the_air?language=en-US&page=1&region=${region}`,
+      );
+    },
+
+    getTVShow(id: number | string): Promise<TVShow | null> {
+      return fetchApi<TVShow>(`${baseUrl}/tv/${id}?language=en-US`);
+    },
+
+    getTVSeason(
+      id: number | string,
+      seasonNumber: number | string,
+    ): Promise<TVSeason | null> {
+      return fetchApi<TVSeason>(
+        `${baseUrl}/tv/${id}/season/${seasonNumber}?language=en-US`,
+      );
+    },
+
+    // ─── Search ─────────────────────────────────────────────────────────────
+
+    /** Multi-search across movies and TV (people are filtered out). */
+    async multiSearch(term: string): Promise<MultiSearchItem[] | null> {
+      const results = await fetchApiList<MultiSearchItem>(
+        `${baseUrl}/search/multi?query=${encodeURIComponent(
+          term,
+        )}&include_adult=false&language=en-US&page=1`,
+      );
+      return (
+        results?.filter(
+          (r) => r.media_type === "movie" || r.media_type === "tv",
+        ) ?? null
+      );
     },
   };
 }
