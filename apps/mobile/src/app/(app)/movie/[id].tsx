@@ -16,7 +16,10 @@ function CastRow({ cast }: { cast: CastAndCrew[] }) {
         {cast.slice(0, 15).map((person) => {
           const photo = tmdb.imageUrl(person.profile_path, "w185");
           return (
-            <View className="mr-4 w-20" key={`${person.id}-${person.character}`}>
+            <View
+              className="mr-4 w-20"
+              key={`${person.id}-${person.character}`}
+            >
               <View className="h-20 w-20 overflow-hidden rounded-full bg-neutral-800">
                 {photo ? (
                   <Image
@@ -88,7 +91,7 @@ export default function MovieDetailScreen() {
   return (
     <View className="flex-1 bg-neutral-950">
       <Stack.Screen options={{ headerShown: true, title: movie.title }} />
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}>
         {backdrop ? (
           <Image
             cachePolicy="memory-disk"
@@ -98,15 +101,13 @@ export default function MovieDetailScreen() {
           />
         ) : null}
 
-        <View className="px-4 pt-4">
+        <View className="flex-1 px-4 pt-4">
           <Text className="text-2xl font-bold text-white">{movie.title}</Text>
           <Text className="mt-1 text-sm text-neutral-400">
             {[
               year,
               movie.runtime ? `${movie.runtime} min` : null,
-              movie.vote_average
-                ? `★ ${movie.vote_average.toFixed(1)}`
-                : null,
+              movie.vote_average ? `★ ${movie.vote_average.toFixed(1)}` : null,
             ]
               .filter(Boolean)
               .join("  ·  ")}
@@ -134,6 +135,8 @@ export default function MovieDetailScreen() {
               {movie.overview}
             </Text>
           ) : null}
+
+          <View className="flex-1" />
 
           <CastRow cast={cast} />
         </View>

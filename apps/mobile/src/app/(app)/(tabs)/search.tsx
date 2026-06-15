@@ -13,6 +13,16 @@ import type { MultiSearchItem } from "@moviewatchlist/shared";
 import { PosterCard } from "@/components/poster-card";
 import { tmdb } from "@/lib/tmdb";
 
+const NUM_COLUMNS = 3;
+
+// Pad to a full final row so the last item keeps its column width instead of
+// stretching across the row (flex-1 + numColumns leaves a short row stretched).
+function padToColumns(items: MultiSearchItem[]): (MultiSearchItem | null)[] {
+  const remainder = items.length % NUM_COLUMNS;
+  if (remainder === 0) return items;
+  return [...items, ...Array(NUM_COLUMNS - remainder).fill(null)];
+}
+
 export default function SearchScreen() {
   const router = useRouter();
   const [term, setTerm] = useState("");
@@ -72,22 +82,28 @@ export default function SearchScreen() {
         <FlatList
           columnWrapperStyle={{ gap: 12, paddingHorizontal: 16 }}
           contentContainerStyle={{ gap: 16, paddingBottom: 24, paddingTop: 8 }}
-          data={results}
-          keyExtractor={(item) => `${item.media_type}-${item.id}`}
+          data={padToColumns(results)}
+          keyExtractor={(item, index) =>
+            item ? `${item.media_type}-${item.id}` : `placeholder-${index}`
+          }
           ListEmptyComponent={
             term.trim().length >= 2 ? (
               <Text className="px-4 text-neutral-500">No results.</Text>
             ) : null
           }
-          numColumns={3}
-          renderItem={({ item }) => (
-            <PosterCard
-              onPress={() => openItem(item)}
-              posterPath={item.poster_path}
-              title={item.title ?? item.name ?? "Untitled"}
-              widthClassName="flex-1"
-            />
-          )}
+          numColumns={NUM_COLUMNS}
+          renderItem={({ item }) =>
+            item ? (
+              <PosterCard
+                onPress={() => openItem(item)}
+                posterPath={item.poster_path}
+                title={item.title ?? item.name ?? "Untitled"}
+                widthClassName="flex-1"
+              />
+            ) : (
+              <View className="flex-1" />
+            )
+          }
         />
       )}
     </SafeAreaView>
