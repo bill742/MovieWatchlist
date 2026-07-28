@@ -8,13 +8,16 @@
  * URLs directly means Vercel's Image Optimization is never invoked, so we are
  * not billed for transformations — TMDB's CDN does the resizing for free.
  *
- * Each call site already picks an appropriate size (`w92`/`w200`/`w342`/
- * `w500`/`original`, …). We honor that size and only promote to `original`
- * when `next/image` requests a wider render (e.g. for high-DPR screens).
- * `original` is valid for every TMDB image type, so this never produces a
- * broken URL — unlike mapping to an arbitrary `w###`, which 404s for types
- * that don't list that size. Non-TMDB or already-`original` srcs are returned
- * untouched.
+ * We snap the width `next/image` asks for up to the nearest size TMDB
+ * publishes, so each screen gets an appropriately sized file and the generated
+ * srcset is genuinely responsive. TMDB accepts these buckets for every image
+ * type (poster, backdrop, profile, still) — only widths outside the list, such
+ * as `w201`, return 400 — so replacing the size segment never breaks a URL.
+ *
+ * The size a call site puts in `src` is therefore a hint, not a ceiling: a
+ * `w200` src rendered at 300px resolves to `w300` rather than being upscaled
+ * by the browser. Anything wider than the largest bucket falls back to
+ * `original`. Non-TMDB srcs (e.g. a local /public asset) are returned as-is.
  */
 
 interface TmdbImageLoaderParams {
@@ -23,20 +26,22 @@ interface TmdbImageLoaderParams {
   width: number;
 }
 
-const TMDB_SIZED_PATH = /\/t\/p\/w(\d+)\//;
+// Ascending. https://developer.themoviedb.org/docs/image-basics
+const TMDB_WIDTHS = [
+  45, 92, 154, 185, 200, 300, 342, 400, 500, 780, 1280,
+] as const;
+
+const TMDB_SIZED_PATH = /\/t\/p\/(?:w\d+|original)\//;
 
 function tmdbImageLoader({ src, width }: TmdbImageLoaderParams): string {
-  const match = src.match(TMDB_SIZED_PATH);
+  if (!TMDB_SIZED_PATH.test(src)) return src;
 
-  // Already `original`, or not a TMDB URL (e.g. a local /public asset).
-  if (!match) return src;
+  const bucket = TMDB_WIDTHS.find((candidate) => candidate >= width);
 
-  const currentWidth = Number(match[1]);
-  if (width > currentWidth) {
-    return src.replace(TMDB_SIZED_PATH, "/t/p/original/");
-  }
-
-  return src;
+  return src.replace(
+    TMDB_SIZED_PATH,
+    bucket ? `/t/p/w${bucket}/` : "/t/p/original/"
+  );
 }
 
 export default tmdbImageLoader;
