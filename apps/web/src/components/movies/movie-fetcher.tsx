@@ -10,7 +10,7 @@ import {
   getNowPlayingMovies,
   getTrendingMovies,
   getUpcomingMovies,
-} from "@/data/loaders";
+} from "@/data/client-loaders";
 import { useRegion } from "@/lib/region-context";
 import type { FeaturedItem, Movie } from "@/types";
 

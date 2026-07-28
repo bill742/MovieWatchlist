@@ -1,7 +1,13 @@
+import "server-only";
+
 import { cache } from "react";
 
 import type { CastAndCrew, Movie, Person, PersonMovieCredit } from "@/types";
-import { fetchAPI, fetchAPIList } from "@/utils/fetch-apis";
+import {
+  fetchAPI,
+  fetchAPIList,
+  tmdbRequestOptions,
+} from "@/utils/fetch-apis";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -151,12 +157,7 @@ export const getMovieTrailer = cache(
     try {
       const url = `${BASE_URL}/movie/${movieId}/videos?language=en-US`;
 
-      const response = await fetch(url, {
-        headers: {
-          Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
-          accept: "application/json",
-        },
-      });
+      const response = await fetch(url, tmdbRequestOptions());
 
       if (!response.ok) {
         return null;

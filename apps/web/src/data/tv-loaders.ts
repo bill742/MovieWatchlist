@@ -1,3 +1,5 @@
+import "server-only";
+
 import { cache } from "react";
 
 import type {
@@ -6,7 +8,11 @@ import type {
   TVSeason,
   TVShow,
 } from "@/types";
-import { fetchAPI, fetchAPIList } from "@/utils/fetch-apis";
+import {
+  fetchAPI,
+  fetchAPIList,
+  tmdbRequestOptions,
+} from "@/utils/fetch-apis";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -56,12 +62,7 @@ export const getTVTrailer = cache(
   async (showId: string): Promise<string | null> => {
     try {
       const url = `${BASE_URL}/tv/${showId}/videos?language=en-US`;
-      const response = await fetch(url, {
-        headers: {
-          Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
-          accept: "application/json",
-        },
-      });
+      const response = await fetch(url, tmdbRequestOptions());
       if (!response.ok) return null;
       const data = await response.json();
       const videos: { site: string; type: string; official: boolean; key: string }[] =

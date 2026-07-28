@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { MovieList } from "@/components/movies/movie-list";
 import { SkeletonCardList } from "@/components/skeletons/skeleton-card-list";
 
-import { getSearchResults } from "@/data/loaders";
+import { getSearchResults } from "@/data/client-loaders";
 import type { Movie } from "@/types";
 
 function ClientSearch() {

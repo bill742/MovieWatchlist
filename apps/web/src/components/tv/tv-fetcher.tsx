@@ -10,7 +10,7 @@ import {
   getTVShow,
   getTVTrailer,
   getTrendingTV,
-} from "@/data/tv-loaders";
+} from "@/data/client-loaders";
 import { useRegion } from "@/lib/region-context";
 import type { FeaturedItem, TVShow } from "@/types";
 

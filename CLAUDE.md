@@ -201,16 +201,18 @@ The database schema, RLS policies, and the `handle_new_user` trigger (auto-creat
 
 Defined in `apps/web/.env` (see `.env.example`):
 
-- `NEXT_PUBLIC_API_KEY` — TMDB bearer token (`"Bearer <token>"`)
+- `TMDB_API_KEY` — TMDB read access token, server-only, bare token (no `Bearer ` prefix)
 - `NEXT_PUBLIC_API_URL` — TMDB base URL
 - `NEXT_PUBLIC_API_IMAGE_PATH` — TMDB image base
 - `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SITE_NAME`
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-> ⚠️ The TMDB key is still `NEXT_PUBLIC_*` and therefore exposed to the browser. The
-> server-side TMDB proxy described in `PLAN.md` ("TMDB API Security Fix") is **not yet
-> implemented** — there is no `app/api/tmdb` route. Treat moving TMDB calls server-side
-> as outstanding work, not a done deal.
+The TMDB token no longer reaches the browser. `src/data/loaders.ts`,
+`src/data/tv-loaders.ts`, and `src/utils/fetch-apis.ts` all `import "server-only"`, so
+importing them from a `"use client"` component is a build error. Client components use
+`src/data/client-loaders.ts`, which calls the route handlers under `src/app/api`. When
+adding a loader a client component needs, add the route handler and the
+`client-loaders.ts` wrapper alongside it.
 
 ## Component conventions
 
