@@ -143,7 +143,7 @@ When creating client components that use browser-specific features:
 
 - **API:** The Movie Database (TMDB)
 - **Environment Variables:**
-  - `NEXT_PUBLIC_API_KEY` - TMDB API authorization
+  - `TMDB_API_KEY` - TMDB read access token (server-only, no `NEXT_PUBLIC_` prefix, no `Bearer ` prefix in the value)
   - `NEXT_PUBLIC_API_URL` - TMDB API base URL
 
 ### Data Layer Architecture
@@ -154,12 +154,21 @@ When creating client components that use browser-specific features:
 
 ```
 src/
+├── app/api/                # Route handlers exposing loaders to the browser
 ├── data/
-│   └── loaders.ts          # All API data fetching functions
+│   ├── loaders.ts          # All API data fetching functions (server-only)
+│   └── client-loaders.ts   # Browser-side callers of the /api routes
 ├── utils/
-│   └── fetch-apis.ts       # Generic fetch utilities
+│   └── fetch-apis.ts       # Generic fetch utilities (server-only)
 └── components/             # UI components (NO direct API calls)
 ```
+
+**The TMDB token never reaches the browser.** `loaders.ts` and `fetch-apis.ts`
+both `import "server-only"`, so importing them from a `"use client"` component
+is a build error. Client components import the matching function from
+`client-loaders.ts` instead, which calls a route handler under `src/app/api`.
+When adding a loader that a client component needs, add the route handler and
+the `client-loaders.ts` wrapper alongside it.
 
 #### **Pattern: Centralized Loaders**
 

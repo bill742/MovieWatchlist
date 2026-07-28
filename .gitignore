@@ -42,3 +42,5 @@ next-env.d.ts
 
 # backup software
 .sync.ffs_db
+# Local Netlify folder
+.netlify
