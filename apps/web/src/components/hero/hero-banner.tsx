@@ -31,6 +31,9 @@ function HeroBanner({ item, trailerKey }: HeroBannerProps) {
               src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}original${item.backdrop_path}`}
               alt={item.title}
               fill
+              // Spans the layout's content column, which caps at max-w-7xl
+              // less its px-8 gutters.
+              sizes="(min-width: 1280px) 1216px, 100vw"
               className="object-cover"
               priority
             />

@@ -67,6 +67,8 @@ function EpisodeList({
                   src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w300${episode.still_path}`}
                   alt={episode.name}
                   fill
+                  // Fixed w-32 container at every breakpoint.
+                  sizes="128px"
                   className="object-cover"
                 />
               ) : (

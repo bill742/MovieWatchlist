@@ -83,6 +83,8 @@ export default async function TVSeasonPage({
               src={`${process.env.NEXT_PUBLIC_API_IMAGE_PATH}w342${seasonData.poster_path}`}
               alt={seasonData.name}
               fill
+              // Fixed w-32 container at every breakpoint.
+              sizes="128px"
               className="object-cover"
             />
           </div>
