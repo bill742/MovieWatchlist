@@ -1,10 +1,14 @@
 import { createTmdbClient } from "@moviewatchlist/shared";
 
-// Framework-agnostic TMDB client, wired to Expo's public env vars. Mirrors the
-// web app's NEXT_PUBLIC_* TMDB config (key is intentionally client-exposed for
-// now; the server-side proxy is a separate future task per PLAN.md).
+// TMDB reads go through the web app's proxy rather than straight to TMDB.
+//
+// Expo inlines every EXPO_PUBLIC_* value into the shipped bundle, where it can
+// be read straight out of a distributed .ipa/.apk — so the app is given no
+// TMDB token at all. The proxy holds it server-side and forwards allowlisted
+// read-only paths.
+//
+// The image base still points at TMDB's CDN: those URLs need no credential.
 export const tmdb = createTmdbClient({
-  baseUrl: process.env.EXPO_PUBLIC_TMDB_API_URL!,
-  bearerToken: process.env.EXPO_PUBLIC_TMDB_API_KEY!,
+  baseUrl: process.env.EXPO_PUBLIC_TMDB_PROXY_URL!,
   imageBase: process.env.EXPO_PUBLIC_TMDB_IMAGE_PATH!,
 });

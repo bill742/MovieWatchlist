@@ -9,10 +9,18 @@ import type {
 // ─── Configuration ────────────────────────────────────────────────────────────
 
 export interface TmdbClientConfig {
-  /** TMDB API base URL, e.g. "https://api.themoviedb.org/3". */
+  /**
+   * Where TMDB reads are sent. Either TMDB itself
+   * ("https://api.themoviedb.org/3") or a proxy that forwards to it and holds
+   * the credential server-side ("https://example.com/api/tmdb").
+   */
   baseUrl: string;
-  /** Authorization header value, e.g. "Bearer <token>". */
-  bearerToken: string;
+  /**
+   * Authorization header value, e.g. "Bearer <token>". Omit when `baseUrl`
+   * points at a proxy that authenticates on our behalf — a client that cannot
+   * keep a secret should not be given one.
+   */
+  bearerToken?: string;
   /** TMDB image base, e.g. "https://image.tmdb.org/t/p/". */
   imageBase: string;
 }
@@ -30,10 +38,13 @@ export function createTmdbClient({
   bearerToken,
   imageBase,
 }: TmdbClientConfig) {
-  const headers = {
-    Authorization: bearerToken,
+  const headers: Record<string, string> = {
     accept: "application/json",
   };
+
+  if (bearerToken) {
+    headers.Authorization = bearerToken;
+  }
 
   async function fetchApi<T>(url: string): Promise<T | null> {
     try {
