@@ -1,0 +1,3 @@
+[build.environment]
+  # Documentation files contain placeholder env var examples, not real secrets.
+  SECRETS_SCAN_OMIT_PATHS = "README.md,AGENTS.md,.env.example"

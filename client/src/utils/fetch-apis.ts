@@ -1,4 +1,24 @@
+import "server-only";
+
 import type { Movie } from "@/types";
+
+/**
+ * Request options shared by every TMDB call.
+ *
+ * TMDB_API_KEY is deliberately not prefixed with NEXT_PUBLIC_ — the read
+ * access token must stay on the server. Client components reach TMDB through
+ * the route handlers in src/app/api instead. The `server-only` import above
+ * turns an accidental client import of this module into a build error.
+ */
+export function tmdbRequestOptions(): RequestInit {
+  return {
+    headers: {
+      Authorization: `Bearer ${process.env.TMDB_API_KEY || ""}`,
+      accept: "application/json",
+    },
+    method: "GET",
+  };
+}
 
 /**
  * Generic API fetch utility for single resource endpoints
@@ -6,13 +26,7 @@ import type { Movie } from "@/types";
  * @returns Promise resolving to the fetched data or null on error
  */
 export async function fetchAPI<T = Movie>(url: string): Promise<T | null> {
-  const options: RequestInit = {
-    headers: {
-      Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
-      accept: "application/json",
-    },
-    method: "GET",
-  };
+  const options = tmdbRequestOptions();
 
   try {
     const response = await fetch(url, options);
@@ -40,13 +54,7 @@ export async function fetchAPI<T = Movie>(url: string): Promise<T | null> {
 export async function fetchAPIList<T = Movie>(
   url: string
 ): Promise<T[] | null> {
-  const options: RequestInit = {
-    headers: {
-      Authorization: process.env.NEXT_PUBLIC_API_KEY || "",
-      accept: "application/json",
-    },
-    method: "GET",
-  };
+  const options = tmdbRequestOptions();
 
   try {
     const response = await fetch(url, options);

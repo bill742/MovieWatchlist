@@ -31,13 +31,15 @@ Data is sourced entirely from [The Movie Database (TMDB) API v3](https://develop
 Create a `.env.local` file in this directory with your TMDB credentials:
 
 ```bash
-NEXT_PUBLIC_API_KEY=Bearer <your_tmdb_read_access_token>
+TMDB_API_KEY=your_tmdb_read_access_token
 NEXT_PUBLIC_API_URL=https://api.themoviedb.org/3
 NEXT_PUBLIC_API_IMAGE_PATH=https://image.tmdb.org/t/p/
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 A free TMDB API read access token can be obtained at [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api).
+
+`TMDB_API_KEY` holds the token on its own — the `Bearer ` prefix is added in code, so don't include it in the value. The variable is intentionally not prefixed with `NEXT_PUBLIC_`: it is read only on the server, and browser requests reach TMDB through the route handlers in `src/app/api`.
 
 ### Run the development server
 
