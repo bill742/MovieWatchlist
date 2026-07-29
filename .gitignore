@@ -12,6 +12,8 @@ node_modules
 
 # testing
 coverage
+playwright-report/
+test-results/
 
 # next.js
 .next/
@@ -45,6 +47,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# netlify
+.netlify
 
 # typescript
 *.tsbuildinfo
