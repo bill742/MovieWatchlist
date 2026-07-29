@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Star } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
+
 import type { MediaCardItem } from "@/types";
 
 interface Props {
@@ -11,7 +12,8 @@ interface Props {
 }
 
 function MediaCard({ item }: Props) {
-  const href = item.media_type === "tv" ? `/tv/${item.id}` : `/movies/${item.id}`;
+  const href =
+    item.media_type === "tv" ? `/tv/${item.id}` : `/movies/${item.id}`;
 
   return (
     <Link href={href} className="group no-underline">
@@ -28,7 +30,7 @@ function MediaCard({ item }: Props) {
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gray-200 text-center dark:bg-gray-700">
               <span className="px-4 text-sm text-gray-600 dark:text-gray-300">
-                No Image Available
+                {item.title}
               </span>
             </div>
           )}
