@@ -3,6 +3,39 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const PROTECTED_PATHS = ["/watchlist", "/profile"];
 
+/**
+ * How long we will wait on Supabase before treating the request as signed out.
+ *
+ * When the auth host is unreachable, gotrue retries with exponential backoff
+ * for ~26s before surfacing AuthRetryableFetchError — and this runs on every
+ * request carrying a session cookie, so a Supabase outage otherwise turns into
+ * ~51s page loads for every signed-in user. Generous enough that an ordinarily
+ * slow response still succeeds rather than signing people out.
+ */
+const AUTH_TIMEOUT_MS = 5000;
+
+/**
+ * Resolves `work`, or falls back if it hasn't settled within the timeout.
+ *
+ * The abort signal on the Supabase client cancels the in-flight request so we
+ * don't leave a socket open; this race is the hard bound, since gotrue retries
+ * internally and would otherwise keep going long after the first attempt was
+ * cancelled.
+ */
+async function withinTimeout<T>(work: Promise<T>, fallback: T): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const timeout = new Promise<T>((resolve) => {
+    timer = setTimeout(() => resolve(fallback), AUTH_TIMEOUT_MS);
+  });
+
+  try {
+    return await Promise.race([work, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function proxy(request: NextRequest) {
   // Carry the current pathname as a header so Server Components can read it
   // without accessing dynamic request params (used for metadata generation).
@@ -39,12 +72,23 @@ export async function proxy(request: NextRequest) {
           );
         },
       },
+      global: {
+        fetch: (input, init) =>
+          fetch(input, {
+            ...init,
+            signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
+          }),
+      },
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await withinTimeout(
+    supabase.auth
+      .getUser()
+      .then(({ data }) => data.user)
+      .catch(() => null),
+    null,
+  );
 
   const isProtected = PROTECTED_PATHS.some((p) =>
     request.nextUrl.pathname.startsWith(p),
@@ -61,7 +105,11 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // The public TMDB routes are excluded deliberately: they read nothing
+  // user-specific, so running session refresh on them only added a Supabase
+  // round trip per request. /auth/callback is NOT excluded — it needs the
+  // session handling to complete a sign-in.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/(?:movies|tv|search|tmdb)(?:/|$)|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
