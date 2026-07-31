@@ -1,3 +1,10 @@
+[build]
+  command = "npm run build"
+  # Next.js Runtime v5 reads the build output from .next and turns SSR routes,
+  # API routes and proxy.ts into Netlify Functions/Edge Functions. Without this,
+  # Netlify falls back to publishing the base directory (the raw source).
+  publish = ".next"
+
 [build.environment]
   # Documentation files contain placeholder env var examples, not real secrets.
   SECRETS_SCAN_OMIT_PATHS = "README.md,AGENTS.md,.env.example"
