@@ -5,6 +5,13 @@
   # Netlify falls back to publishing the base directory (the raw source).
   publish = ".next"
 
+# Netlify only auto-installs the Next.js Runtime when CI framework detection
+# finds Next.js, which it misses here because the repo root has no package.json
+# (the app lives in the base directory, client/). Without the runtime the raw
+# .next directory is published as static files and no server handler exists.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [build.environment]
   # Documentation files contain placeholder env var examples, not real secrets.
   SECRETS_SCAN_OMIT_PATHS = "README.md,AGENTS.md,.env.example"
