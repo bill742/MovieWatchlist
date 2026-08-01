@@ -2,6 +2,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import { switchToDarkMode } from "./helpers/theme";
+
 test.describe("Homepage does not have accessibility issues", () => {
   test("Should not have any automatically detectable accessibility issues", async ({
     page,
@@ -17,11 +19,8 @@ test.describe("Homepage does not have accessibility issues", () => {
     expect(accessibilityScanResults.violations).toEqual([]);
 
     // Test dark mode
-    const themeToggle = page.locator("#themeToggle");
-    await themeToggle.first().click();
     console.log("Switching to Dark mode for accessibility testing");
-    const darkModeClass = await page.locator("html").getAttribute("class");
-    expect(darkModeClass).toContain("dark");
+    await switchToDarkMode(page);
 
     const darkModeAccessibilityScanResults = await new AxeBuilder({
       page,

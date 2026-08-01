@@ -10,15 +10,28 @@ const CACHE_CONTROL = "public, s-maxage=300, stale-while-revalidate=600";
  *
  * Loaders that treat null as a legitimate value (a show with no trailer)
  * should wrap it in an object before calling this.
+ *
+ * `varyByQuery` names the query params that change the response. Netlify's CDN
+ * narrows the cache key to Next.js's own internal params, so anything else --
+ * `term`, `region` -- is ignored unless declared here, and every caller would
+ * share one cache entry for the whole s-maxage window.
  */
-export function jsonResponse<T>(data: T | null, errorMessage: string) {
+export function jsonResponse<T>(
+  data: T | null,
+  errorMessage: string,
+  varyByQuery?: string[]
+) {
   if (data === null) {
     return NextResponse.json({ error: errorMessage }, { status: 502 });
   }
 
-  return NextResponse.json(data, {
-    headers: { "Cache-Control": CACHE_CONTROL },
-  });
+  const headers: Record<string, string> = { "Cache-Control": CACHE_CONTROL };
+
+  if (varyByQuery?.length) {
+    headers["Netlify-Vary"] = `query=${varyByQuery.join("|")}`;
+  }
+
+  return NextResponse.json(data, { headers });
 }
 
 /**

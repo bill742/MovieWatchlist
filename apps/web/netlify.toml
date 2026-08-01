@@ -13,6 +13,14 @@
 [build]
   command = "pnpm turbo build --filter=@moviewatchlist/web"
 
+# Declared rather than relying on Netlify's automatic install. On `main` the
+# runtime silently never ran -- CI framework detection missed Next.js, and the
+# deploy published the build directory as static files: a green build serving a
+# 404 with no server handler. Detection should work here (the package directory
+# is the Next.js app), but declaring it removes the dependence entirely.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [build.environment]
   # Documentation files contain placeholder env var examples, not real secrets.
   SECRETS_SCAN_OMIT_PATHS = "README.md,CLAUDE.md,.env.example"

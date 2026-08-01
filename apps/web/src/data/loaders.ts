@@ -123,7 +123,7 @@ export const getSearchResults = cache(
       console.error("NEXT_PUBLIC_API_URL is not defined");
       return null;
     }
-    const url = `${BASE_URL}/search/movie?query=${term}&include_adult=false&language=en-US&page=1`;
+    const url = `${BASE_URL}/search/movie?query=${encodeURIComponent(term)}&include_adult=false&language=en-US&page=1`;
     const searchResults = await fetchAPIList<Movie>(url);
 
     if (!searchResults) {

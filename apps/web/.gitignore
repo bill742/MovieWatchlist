@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# netlify (deno.lock is emitted by edge function bundling)
+deno.lock
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
