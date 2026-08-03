@@ -81,7 +81,7 @@ export default function LoginScreen() {
         </Pressable>
 
         <View className="mt-6 flex-row justify-center">
-          <Text className="text-neutral-400">No account? </Text>
+          <Text className="text-neutral-400">Create an account </Text>
           <Link className="font-semibold text-white" href="/signup">
             Sign up
           </Link>
