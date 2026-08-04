@@ -37,9 +37,14 @@ export default defineConfig({
 
 	/* Run your local dev server before starting the tests */
 	webServer: {
-		command: "pnpm run dev",
+		// `next dev` compiles each route on its first request, which on a CI
+		// runner pushed page.goto past the 30s timeout. CI serves a production
+		// build instead — the workflow runs `build` in an earlier step — which is
+		// both faster and closer to what actually ships.
+		command: process.env.CI ? "pnpm run start" : "pnpm run dev",
 		url: "http://localhost:3000",
 		reuseExistingServer: !process.env.CI,
+		timeout: 120_000,
 	},
 
 	/* Configure projects for major browsers */

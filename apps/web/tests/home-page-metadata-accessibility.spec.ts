@@ -38,21 +38,18 @@ test.describe("Page Metadata and Document Structure", () => {
     const lang = await page.locator("html").getAttribute("lang");
     expect(lang).toBe("en");
 
-    const title = await page.title();
-    expect(title).toBe(
+    await expect(page).toHaveTitle(
       `${process.env.NEXT_PUBLIC_SITE_NAME} - Track Premiere Dates & Discover Films`
     );
 
-    const descriptionMeta = await page
-      .locator('meta[name="description"]')
-      .getAttribute("content");
-    expect(descriptionMeta).toBe(
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+      "content",
       "Discover and track movie premiere dates for upcoming and now playing films worldwide. Browse the latest releases and plan your movie watching."
     );
 
-    const canonicalLink = await page
-      .locator('link[rel="canonical"]')
-      .getAttribute("href");
-    expect(canonicalLink).toBe(process.env.NEXT_PUBLIC_SITE_URL);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      process.env.NEXT_PUBLIC_SITE_URL!
+    );
   });
 });

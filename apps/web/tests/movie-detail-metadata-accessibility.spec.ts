@@ -43,22 +43,17 @@ test.describe("Page Metadata and Document Structure", () => {
     const lang = await page.locator("html").getAttribute("lang");
     expect(lang).toBe("en");
 
-    const title = await page.title();
-    expect(title).toBe(
+    await expect(page).toHaveTitle(
       `${KNOWN_MOVIE_TITLE} (${KNOWN_MOVIE_YEAR}) - ${process.env.NEXT_PUBLIC_SITE_NAME}`
     );
 
-    const descriptionMeta = await page
-      .locator('meta[name="description"]')
-      .getAttribute("content");
-    expect(descriptionMeta).toBe(
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+      "content",
       "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague the streets. The partnership proves to be effective, but they soon find themselves prey to a reign of chaos unleashed by a rising criminal mastermind known to the terrified citizens of Gotham as the Joker."
     );
 
-    const canonicalLink = await page
-      .locator('link[rel="canonical"]')
-      .getAttribute("href");
-    expect(canonicalLink).toBe(
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
       `${process.env.NEXT_PUBLIC_SITE_URL}/movies/${KNOWN_MOVIE_ID}`
     );
   });

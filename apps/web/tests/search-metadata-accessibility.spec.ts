@@ -54,22 +54,17 @@ test.describe("Page Metadata and Document Structure", () => {
     const lang = await page.locator("html").getAttribute("lang");
     expect(lang).toBe("en");
 
-    const title = await page.title();
-    expect(title).toBe(
+    await expect(page).toHaveTitle(
       `"${KNOWN_MOVIE_TITLE}" - Search Results - ${process.env.NEXT_PUBLIC_SITE_NAME}`
     );
 
-    const descriptionMeta = await page
-      .locator('meta[name="description"]')
-      .getAttribute("content");
-    expect(descriptionMeta).toBe(
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+      "content",
       `Search results for "${KNOWN_MOVIE_TITLE}" on Movie Watchlist.`
     );
 
-    const canonicalLink = await page
-      .locator('link[rel="canonical"]')
-      .getAttribute("href");
-    expect(canonicalLink).toBe(
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
       `${process.env.NEXT_PUBLIC_SITE_URL}/search?term=${KNOWN_MOVIE_TITLE}`
     );
   });

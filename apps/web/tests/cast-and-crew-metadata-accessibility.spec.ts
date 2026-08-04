@@ -42,8 +42,7 @@ test.describe("Page Metadata and Document Structure", () => {
     const lang = await page.locator("html").getAttribute("lang");
     expect(lang).toBe("en");
 
-    const title = await page.title();
-    expect(title).toBe(
+    await expect(page).toHaveTitle(
       `${KNOWN_PERSON_NAME} - ${process.env.NEXT_PUBLIC_SITE_NAME}`
     );
 
@@ -54,10 +53,8 @@ test.describe("Page Metadata and Document Structure", () => {
     expect(descriptionMeta).toBeTruthy();
     expect(descriptionMeta!.length).toBeLessThanOrEqual(160);
 
-    const canonicalLink = await page
-      .locator('link[rel="canonical"]')
-      .getAttribute("href");
-    expect(canonicalLink).toBe(
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
       `${process.env.NEXT_PUBLIC_SITE_URL}/cast-and-crew/${KNOWN_PERSON_ID}`
     );
   });
