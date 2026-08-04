@@ -7,11 +7,15 @@
 # Pointing the base directory here instead would install inside the app, and
 # that dependency would fail to resolve.
 #
-# No `publish` key: Next.js on Netlify is handled by the Next Runtime, which
-# resolves the output itself.
+# `publish` must point at the Next.js build output. Left unset it defaults to
+# the package directory itself, and the Next Runtime rejects that: "Your publish
+# directory cannot be the same as the base directory of your site."
 
 [build]
   command = "pnpm turbo build --filter=@moviewatchlist/web"
+  # Relative to the base directory (the repo root), not to this file --
+  # ".next" alone resolves to /.next and fails.
+  publish = "apps/web/.next"
 
 # Declared rather than relying on Netlify's automatic install. On `main` the
 # runtime silently never ran -- CI framework detection missed Next.js, and the
