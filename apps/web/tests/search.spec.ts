@@ -1,13 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import { submitSearch } from "./helpers/search";
+
 test.describe("Search", () => {
   test("Displays results for a valid movie title", async ({ page }) => {
     await page.goto("./");
 
-    await page.getByPlaceholder("Search by Movie Title").fill("Inception");
-    await page.getByRole("button", { name: "Search movies" }).click();
-
-    await page.waitForURL(/\/search\?term=/);
+    await submitSearch(page, "Inception");
 
     const heading = page.getByRole("heading", {
       name: 'Results for "Inception"',
@@ -26,12 +25,7 @@ test.describe("Search", () => {
   }) => {
     await page.goto("./");
 
-    await page
-      .getByPlaceholder("Search by Movie Title")
-      .fill("xyzxyzxyzqwerty12345notamovie");
-    await page.getByRole("button", { name: "Search movies" }).click();
-
-    await page.waitForURL(/\/search\?term=/);
+    await submitSearch(page, "xyzxyzxyzqwerty12345notamovie");
 
     await expect(
       page.getByRole("heading", { name: /Results for "/ })

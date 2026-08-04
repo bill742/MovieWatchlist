@@ -2,6 +2,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import { submitSearch } from "./helpers/search";
 import { switchToDarkMode } from "./helpers/theme";
 
 const KNOWN_MOVIE_TITLE = "Inception";
@@ -12,12 +13,7 @@ test.describe("Search results page does not have accessibility issues", () => {
   }) => {
     await page.goto("./");
 
-    await page
-      .getByPlaceholder("Search by Movie Title")
-      .fill(KNOWN_MOVIE_TITLE);
-    await page.getByRole("button", { name: "Search movies" }).click();
-
-    await page.waitForURL(/\/search\?term=/);
+    await submitSearch(page, KNOWN_MOVIE_TITLE);
 
     console.log("Running accessibility scan on search results page");
 
@@ -42,12 +38,7 @@ test.describe("Page Metadata and Document Structure", () => {
   test("Verify Search Results Page Metadata", async ({ page }) => {
     await page.goto("./");
 
-    await page
-      .getByPlaceholder("Search by Movie Title")
-      .fill(KNOWN_MOVIE_TITLE);
-    await page.getByRole("button", { name: "Search movies" }).click();
-
-    await page.waitForURL(/\/search\?term=/);
+    await submitSearch(page, KNOWN_MOVIE_TITLE);
 
     console.log("Checking metadata on search results page");
 

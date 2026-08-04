@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import { useRouter } from "next/navigation";
 
 import { SearchIcon, X } from "lucide-react";
@@ -19,7 +20,7 @@ function Search({ onSubmit }: SearchProps = {}) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    router.push(`/search?term=${term}`);
+    router.push(`/search?term=${encodeURIComponent(term)}`);
     setTerm("");
     onSubmit?.();
   };
@@ -30,13 +31,20 @@ function Search({ onSubmit }: SearchProps = {}) {
 
   return (
     <div className="md:w-60% flex w-full p-0 md:p-4">
-      <form id="searchForm" onSubmit={handleSubmit}>
+      {/*
+        `action` and the input's `name` make this a working GET form before
+        React hydrates: without them a submit reloads the current page and the
+        term is lost entirely. Once hydrated, handleSubmit preventDefaults and
+        routes client-side instead.
+      */}
+      <form id="searchForm" action="/search" onSubmit={handleSubmit}>
         <div className="flex w-full gap-4">
           <Input
             placeholder="Search by Movie Title"
             value={term}
             onChange={(e) => setTerm(e.target.value)}
             id="search"
+            name="term"
           />
           {term && (
             <Button
