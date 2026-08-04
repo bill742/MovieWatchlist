@@ -4,5 +4,14 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "cSpell.words": ["TMDB", "trivago", "Watchlist", "IMDB"]
+  "eslint.runtime": "node",
+  "cSpell.words": [
+    "IMDB",
+    "moviewatchlist",
+    "plpgsql",
+    "Pressable",
+    "TMDB",
+    "trivago",
+    "Watchlist"
+  ]
 }
