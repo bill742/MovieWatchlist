@@ -25,31 +25,23 @@ function toMediaCardItem(item: MultiSearchItem): MediaCardItem {
 function ClientSearch() {
   const searchParams = useSearchParams();
   const term = searchParams.get("term");
-  const [searchResults, setSearchResults] = useState<MultiSearchItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  // null means "still loading" — the loaders swallow their own errors and
+  // resolve to null, so a failed search is just an empty result set.
+  const [searchResults, setSearchResults] = useState<MediaCardItem[] | null>(
+    null
+  );
 
   useEffect(() => {
-    setLoading(true);
+    setSearchResults(null);
 
-    const fetchSearchResults = async () => {
-      try {
-        const searchResultsData = await getSearchResults(term || "");
-        startTransition(() => {
-          setSearchResults(searchResultsData || []);
-          setLoading(false);
-        });
-      } catch {
-        startTransition(() => {
-          setSearchResults([]);
-          setLoading(false);
-        });
-      }
-    };
-
-    fetchSearchResults();
+    getSearchResults(term || "").then((results) =>
+      startTransition(() =>
+        setSearchResults((results ?? []).map(toMediaCardItem))
+      )
+    );
   }, [term]);
 
-  if (loading) {
+  if (searchResults === null) {
     return (
       <ViewTransition key="skeleton" default="none" exit="slide-down">
         <div className="space-y-12 py-8">
@@ -62,10 +54,7 @@ function ClientSearch() {
   return (
     <ViewTransition enter="slide-up" default="none" key="content">
       <div className="space-y-12 py-8">
-        <MediaList
-          items={searchResults.map(toMediaCardItem)}
-          heading={`Results for "${term}"`}
-        />
+        <MediaList items={searchResults} heading={`Results for "${term}"`} />
       </div>
     </ViewTransition>
   );

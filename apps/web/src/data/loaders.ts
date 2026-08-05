@@ -125,9 +125,6 @@ export const getSearchResults = cache(
       console.error("NEXT_PUBLIC_API_URL is not defined");
       return null;
     }
-    // `multi` rather than `movie`: searching only /search/movie meant TV shows
-    // never appeared on the web, while mobile (which uses the shared client's
-    // multiSearch) returned them.
     const url = `${BASE_URL}/search/multi?query=${encodeURIComponent(term)}&include_adult=false&language=en-US&page=1`;
     const searchResults = await fetchAPIList<MultiSearchItem>(url);
 

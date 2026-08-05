@@ -36,8 +36,7 @@ test.describe("Search", () => {
   test("Includes TV shows, not just movies", async ({ page }) => {
     await page.goto("./");
 
-    // Web search used to hit /search/movie, so TV never appeared here even
-    // though mobile returned it. "Breaking Bad" has no film of the same name.
+    // "Breaking Bad" has no film of the same name, so a /tv/ link is decisive.
     await submitSearch(page, "Breaking Bad");
 
     const heading = page.getByRole("heading", {

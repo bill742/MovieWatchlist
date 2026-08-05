@@ -31,16 +31,12 @@ function Search({ onSubmit }: SearchProps = {}) {
 
   return (
     <div className="md:w-60% flex w-full p-0 md:p-4">
-      {/*
-        `action` and the input's `name` make this a working GET form before
-        React hydrates: without them a submit reloads the current page and the
-        term is lost entirely. Once hydrated, handleSubmit preventDefaults and
-        routes client-side instead.
-      */}
+      {/* action + name keep this a working GET form before React hydrates;
+          handleSubmit takes over once it has. */}
       <form id="searchForm" action="/search" onSubmit={handleSubmit}>
         <div className="flex w-full gap-4">
           <Input
-            placeholder="Search by Movie Title"
+            placeholder="Search by Title"
             value={term}
             onChange={(e) => setTerm(e.target.value)}
             id="search"
@@ -57,7 +53,7 @@ function Search({ onSubmit }: SearchProps = {}) {
               <X className="h-4 w-4" />
             </Button>
           )}
-          <Button type="submit" aria-label="Search movies">
+          <Button type="submit" aria-label="Search movies and TV shows">
             <SearchIcon className="h-4 w-4" />
             <span className="sr-only">Search</span>
           </Button>
