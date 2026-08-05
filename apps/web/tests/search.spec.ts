@@ -30,6 +30,21 @@ test.describe("Search", () => {
     await expect(
       page.getByRole("heading", { name: /Results for "/ })
     ).toBeVisible();
-    await expect(page.getByText("No movies found")).toBeVisible();
+    await expect(page.getByText("No results found")).toBeVisible();
+  });
+
+  test("Includes TV shows, not just movies", async ({ page }) => {
+    await page.goto("./");
+
+    // Web search used to hit /search/movie, so TV never appeared here even
+    // though mobile returned it. "Breaking Bad" has no film of the same name.
+    await submitSearch(page, "Breaking Bad");
+
+    const heading = page.getByRole("heading", {
+      name: 'Results for "Breaking Bad"',
+    });
+    const results = heading.locator("xpath=ancestor::section[1]");
+
+    await expect(results.locator('a[href^="/tv/"]').first()).toBeVisible();
   });
 });

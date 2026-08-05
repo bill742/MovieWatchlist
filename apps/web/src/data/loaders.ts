@@ -1,13 +1,15 @@
-import "server-only";
-
 import { cache } from "react";
 
-import type { CastAndCrew, Movie, Person, PersonMovieCredit } from "@/types";
-import {
-  fetchAPI,
-  fetchAPIList,
-  tmdbRequestOptions,
-} from "@/utils/fetch-apis";
+import "server-only";
+
+import type {
+  CastAndCrew,
+  Movie,
+  MultiSearchItem,
+  Person,
+  PersonMovieCredit,
+} from "@/types";
+import { fetchAPI, fetchAPIList, tmdbRequestOptions } from "@/utils/fetch-apis";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -113,24 +115,30 @@ export const getUpcomingMovies = cache(
 );
 
 /**
- * Searches for movies by title on TMDB API
+ * Searches movies and TV shows by title on TMDB API
  * @param term - Search query string
- * @returns Array of matching movies or null if request fails
+ * @returns Array of matching movies and shows, or null if the request fails
  */
 export const getSearchResults = cache(
-  async (term: string): Promise<Movie[] | null> => {
+  async (term: string): Promise<MultiSearchItem[] | null> => {
     if (!BASE_URL) {
       console.error("NEXT_PUBLIC_API_URL is not defined");
       return null;
     }
-    const url = `${BASE_URL}/search/movie?query=${encodeURIComponent(term)}&include_adult=false&language=en-US&page=1`;
-    const searchResults = await fetchAPIList<Movie>(url);
+    // `multi` rather than `movie`: searching only /search/movie meant TV shows
+    // never appeared on the web, while mobile (which uses the shared client's
+    // multiSearch) returned them.
+    const url = `${BASE_URL}/search/multi?query=${encodeURIComponent(term)}&include_adult=false&language=en-US&page=1`;
+    const searchResults = await fetchAPIList<MultiSearchItem>(url);
 
     if (!searchResults) {
       return null;
     }
 
-    return searchResults;
+    // /search/multi also returns people, which have no detail page here.
+    return searchResults.filter(
+      (result) => result.media_type === "movie" || result.media_type === "tv"
+    );
   }
 );
 
@@ -190,7 +198,10 @@ export const getMovieTrailer = cache(
 export const getPersonMovieCredits = cache(
   async (
     id: string
-  ): Promise<{ cast: PersonMovieCredit[]; crew: PersonMovieCredit[] } | null> => {
+  ): Promise<{
+    cast: PersonMovieCredit[];
+    crew: PersonMovieCredit[];
+  } | null> => {
     if (!BASE_URL) {
       console.error("NEXT_PUBLIC_API_URL is not defined");
       return null;
