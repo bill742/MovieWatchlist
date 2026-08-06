@@ -45,7 +45,9 @@ function AddToWatchlistButton({
       aria-label={isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}
       disabled={pending}
       onClick={handleClick}
-      size="sm"
+      // Matches TrailerButton, which sits beside this on both detail pages and
+      // defaults to lg. At sm this rendered 32px against its 40px.
+      size="lg"
       variant={isInWatchlist ? "default" : "outline"}
     >
       {isInWatchlist ? (
