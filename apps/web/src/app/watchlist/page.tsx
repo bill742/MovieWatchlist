@@ -124,10 +124,12 @@ export default async function WatchlistPage() {
                 tmdbId={item.tmdb_id}
                 mediaType={item.media_type}
                 currentStatus={item.status}
+                title={title}
               />
               <RemoveFromWatchlistButton
                 tmdbId={item.tmdb_id}
                 mediaType={item.media_type}
+                title={title}
               />
             </div>
           </li>

@@ -2,9 +2,8 @@
 
 import { useTransition } from "react";
 
-import type { MediaType, WatchStatus } from "@/types";
-
 import { updateWatchStatus } from "@/lib/actions/watchlist";
+import type { MediaType, WatchStatus } from "@/types";
 
 const STATUS_LABELS: Record<WatchStatus, string> = {
   dropped: "Dropped",
@@ -16,14 +15,17 @@ const STATUS_LABELS: Record<WatchStatus, string> = {
 interface Props {
   currentStatus: WatchStatus;
   mediaType: MediaType;
+  /** Title of the row this belongs to, so each select is distinguishable. */
+  title: string;
   tmdbId: number;
 }
 
-function WatchStatusSelect({ currentStatus, mediaType, tmdbId }: Props) {
+function WatchStatusSelect({ currentStatus, mediaType, title, tmdbId }: Props) {
   const [pending, startTransition] = useTransition();
 
   return (
     <select
+      aria-label={`Watch status for ${title}`}
       className="border-input bg-background text-foreground rounded-md border px-2 py-1 text-sm disabled:opacity-50"
       disabled={pending}
       onChange={(e) => {
