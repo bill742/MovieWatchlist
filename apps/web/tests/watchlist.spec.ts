@@ -134,18 +134,17 @@ test.describe("Watchlist", () => {
     }).toPass({ timeout: 45_000 });
   });
 
-  // KNOWN BUG: clicking the detail-page toggle writes to the database, but the
-  // button keeps its old label until the page is reloaded, so it looks like
-  // nothing happened. Neither revalidatePath on the detail route nor
-  // router.refresh() in the button made it re-render. Left as fixme so the
-  // behaviour is recorded and this starts passing once it is fixed.
-  test.fixme("Detail-page toggle updates without a reload", async ({
+  test("Detail-page toggle updates without a reload", async ({
     page,
   }, testInfo) => {
     const { tvPath } = fixturesFor(testInfo.project.name);
 
-    // beforeEach leaves this one added, so the button starts as "Remove".
     await page.goto(tvPath);
+    // Settle first so this covers the relabel, not the pre-hydration click
+    // window that setWatchlisted deliberately retries through.
+    await page.waitForLoadState("networkidle");
+
+    // beforeEach leaves this one added, so the button starts as "Remove".
     await page.getByRole("button", { name: "Remove from watchlist" }).click();
 
     await expect(

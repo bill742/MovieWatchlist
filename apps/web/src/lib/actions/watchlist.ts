@@ -23,8 +23,9 @@ async function getAuthenticatedUser() {
  * The detail pages render watchlist state too, so their cached copies go stale
  * if only /watchlist is revalidated.
  *
- * Note this does not make the button update in place after a click — that is a
- * separate known issue, pinned by the fixme'd spec in watchlist.spec.ts.
+ * This does not drive the detail-page button's own label: the RSC refetch it
+ * triggers comes back with pre-click markup, so that button tracks its state
+ * locally instead.
  */
 function revalidateWatchlist(tmdbId: number, mediaType: MediaType) {
   revalidatePath("/watchlist");
