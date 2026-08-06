@@ -12,10 +12,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { MediaType, WatchStatus } from "@moviewatchlist/shared";
+import {
+  WATCH_STATUS_LABELS,
+  WATCH_STATUS_OPTIONS,
+} from "@moviewatchlist/shared";
 
 import { tmdb } from "@/lib/tmdb";
 import { getWatchlist } from "@/lib/watchlist";
-import { WATCH_STATUS_LABELS, WATCH_STATUS_OPTIONS } from "@/lib/watch-status";
 
 interface ResolvedItem {
   id: string;

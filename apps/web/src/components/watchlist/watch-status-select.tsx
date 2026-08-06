@@ -3,14 +3,12 @@
 import { useTransition } from "react";
 
 import { updateWatchStatus } from "@/lib/actions/watchlist";
-import type { MediaType, WatchStatus } from "@/types";
-
-const STATUS_LABELS: Record<WatchStatus, string> = {
-  dropped: "Dropped",
-  want_to_watch: "Want to watch",
-  watched: "Watched",
-  watching: "Watching",
-};
+import {
+  type MediaType,
+  WATCH_STATUS_LABELS,
+  WATCH_STATUS_OPTIONS,
+  type WatchStatus,
+} from "@/types";
 
 interface Props {
   currentStatus: WatchStatus;
@@ -34,9 +32,9 @@ function WatchStatusSelect({ currentStatus, mediaType, title, tmdbId }: Props) {
       }}
       value={currentStatus}
     >
-      {Object.entries(STATUS_LABELS).map(([value, label]) => (
+      {WATCH_STATUS_OPTIONS.map((value) => (
         <option key={value} value={value}>
-          {label}
+          {WATCH_STATUS_LABELS[value]}
         </option>
       ))}
     </select>

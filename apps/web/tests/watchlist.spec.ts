@@ -51,8 +51,8 @@ async function setWatchlisted(page: Page, path: string, wanted: boolean) {
       await toggle.click();
     }
 
-    // Clicking does not relabel the button in place, so this only passes once
-    // a reload at the top of a later pass reflects the write.
+    // Confirms the write landed. A click dropped before hydration leaves this
+    // unchanged, and the reload at the top of the next pass retries it.
     await expect(toggle).toHaveAttribute("aria-label", target, {
       timeout: 3_000,
     });
@@ -77,14 +77,35 @@ test.describe("Watchlist", () => {
     await setWatchlisted(page, tvPath, false);
   });
 
-  test("Lists movies and TV shows together", async ({ page }, testInfo) => {
+  test("Lists movies and TV shows under their tabs", async ({
+    page,
+  }, testInfo) => {
     const { moviePath, tvPath } = fixturesFor(testInfo.project.name);
 
     await page.goto("/watchlist");
 
-    // The web page used to render only movies while counting shows as well.
+    // Movies is the default tab, matching the mobile app.
     await expect(rowFor(page, moviePath)).toBeVisible();
+    await expect(rowFor(page, tvPath)).toHaveCount(0);
+
+    // The web page once dropped shows entirely while still counting them.
+    await page.getByRole("button", { name: "TV Shows", exact: true }).click();
     await expect(rowFor(page, tvPath)).toBeVisible();
+    await expect(rowFor(page, moviePath)).toHaveCount(0);
+  });
+
+  test("Status filter narrows the list", async ({ page }, testInfo) => {
+    const { moviePath } = fixturesFor(testInfo.project.name);
+
+    await page.goto("/watchlist");
+    await expect(rowFor(page, moviePath)).toBeVisible();
+
+    // Newly added rows default to "want to watch", so this must hide it.
+    await page.getByRole("button", { name: "Watched", exact: true }).click();
+    await expect(rowFor(page, moviePath)).toHaveCount(0);
+
+    await page.getByRole("button", { name: "All", exact: true }).click();
+    await expect(rowFor(page, moviePath)).toBeVisible();
   });
 
   test("Item count matches the rows shown", async ({ page }) => {
@@ -98,6 +119,7 @@ test.describe("Watchlist", () => {
     const { tvPath } = fixturesFor(testInfo.project.name);
 
     await page.goto("/watchlist");
+    await page.getByRole("button", { name: "TV Shows", exact: true }).click();
 
     const row = rowFor(page, tvPath);
     await row.getByRole("button", { name: /^Remove / }).click();
