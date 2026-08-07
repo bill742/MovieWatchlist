@@ -2,17 +2,13 @@
 
 import { useState, useTransition } from "react";
 
+import { useTheme } from "next-themes";
+
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 import { updateProfile } from "@/lib/actions/profile";
-import { REGIONS, type Theme } from "@/types";
-
-const THEMES: { label: string; value: Theme }[] = [
-  { label: "System default", value: "system" },
-  { label: "Light", value: "light" },
-  { label: "Dark", value: "dark" },
-];
+import { REGIONS, THEME_OPTIONS, type Theme } from "@/types";
 
 const SELECT_CLASS =
   "border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm";
@@ -33,6 +29,10 @@ function PreferencesForm({ initialRegion, initialTheme }: Props) {
   const [theme, setTheme] = useState(initialTheme);
   const [status, setStatus] = useState<"error" | "idle" | "saved">("idle");
   const [pending, startTransition] = useTransition();
+  // next-themes owns what the browser actually renders; the profile row only
+  // records the preference. Saving has to tell both, or the value persists
+  // while the page keeps its old appearance.
+  const { setTheme: applyTheme } = useTheme();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -41,6 +41,7 @@ function PreferencesForm({ initialRegion, initialTheme }: Props) {
     startTransition(async () => {
       try {
         await updateProfile(formData);
+        applyTheme(theme);
         setStatus("saved");
       } catch {
         setStatus("error");
@@ -85,7 +86,7 @@ function PreferencesForm({ initialRegion, initialTheme }: Props) {
           }}
           value={theme}
         >
-          {THEMES.map(({ label, value }) => (
+          {THEME_OPTIONS.map(({ label, value }) => (
             <option key={value} value={value}>
               {label}
             </option>

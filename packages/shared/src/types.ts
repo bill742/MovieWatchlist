@@ -162,6 +162,13 @@ export interface RegionContextType {
 
 export type Theme = "light" | "dark" | "system";
 
+/** Selectable themes, in the order they should appear in pickers. */
+export const THEME_OPTIONS: { label: string; value: Theme }[] = [
+  { label: "System default", value: "system" },
+  { label: "Light", value: "light" },
+  { label: "Dark", value: "dark" },
+];
+
 export interface Profile {
   id: string;
   username: string | null;

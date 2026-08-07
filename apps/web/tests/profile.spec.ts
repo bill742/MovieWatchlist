@@ -38,6 +38,33 @@ test.describe("Profile", () => {
     await expect(page.getByText("Preferences saved")).toBeVisible();
   });
 
+  test("Saving a theme applies it", async ({ page }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== "chromium",
+      "mutates the single shared profile row"
+    );
+
+    await page.goto("/profile");
+    const html = page.locator("html");
+
+    // Theme moved here from a header toggle. The select wrote to the profile
+    // row but never told next-themes, so the page kept its old appearance.
+    await page.locator("#theme").selectOption("dark");
+    await page.getByRole("button", { name: "Save preferences" }).click();
+    await expect(page.getByText("Preferences saved")).toBeVisible();
+
+    await expect(html).toHaveClass(/\bdark\b/);
+
+    // And it survives navigation, not just the save.
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+
+    await page.goto("/profile");
+    await page.locator("#theme").selectOption("system");
+    await page.getByRole("button", { name: "Save preferences" }).click();
+    await expect(page.getByText("Preferences saved")).toBeVisible();
+  });
+
   test("Should not have any automatically detectable accessibility issues", async ({
     page,
   }) => {
