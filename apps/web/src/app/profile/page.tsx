@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
 
-import { getProfile, updateProfile } from "@/lib/actions/profile";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+
+import { getProfile, updateProfile } from "@/lib/actions/profile";
+import { DEFAULT_REGION, REGIONS } from "@/types";
 
 export const metadata: Metadata = {
   title: `Profile - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
 };
-
-const REGIONS = [
-  { code: "US", label: "United States" },
-  { code: "GB", label: "United Kingdom" },
-  { code: "CA", label: "Canada" },
-  { code: "AU", label: "Australia" },
-  { code: "DE", label: "Germany" },
-  { code: "FR", label: "France" },
-];
 
 const THEMES = [
   { label: "System default", value: "system" },
@@ -34,7 +27,7 @@ export default async function ProfilePage() {
           <Label htmlFor="region">Region</Label>
           <select
             className="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm"
-            defaultValue={profile?.region ?? "US"}
+            defaultValue={profile?.region ?? DEFAULT_REGION}
             id="region"
             name="region"
           >

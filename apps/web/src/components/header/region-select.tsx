@@ -9,18 +9,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useRegion } from "@/lib/region-context";
+import { REGIONS } from "@/types";
 
 function RegionSelect() {
   const { region, setRegion } = useRegion();
-
-  const regionOptions = [
-    { flag: "🇺🇸", label: "US", value: "US" },
-    { flag: "🇨🇦", label: "CAN", value: "CA" },
-    { flag: "🇬🇧", label: "GB", value: "GB" },
-    { flag: "🇦🇺", label: "AU", value: "AU" },
-    { flag: "🇩🇪", label: "DE", value: "DE" },
-    { flag: "🇫🇷", label: "FR", value: "FR" },
-  ];
 
   return (
     <DropdownMenu>
@@ -31,20 +23,20 @@ function RegionSelect() {
           aria-label="Select region"
         >
           <span className="text-lg">
-            {regionOptions.find((opt) => opt.value === region)?.flag}
+            {REGIONS.find((option) => option.code === region)?.flag}
           </span>
           <span>{region}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-30">
-        {regionOptions.map((option) => (
+        {REGIONS.map((option) => (
           <DropdownMenuItem
-            key={option.value}
-            onSelect={() => setRegion(option.value)}
+            key={option.code}
+            onSelect={() => setRegion(option.code)}
             className="flex cursor-pointer items-center gap-2"
           >
             <span className="text-lg">{option.flag}</span>
-            <span>{option.label}</span>
+            <span>{option.short}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

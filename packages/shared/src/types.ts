@@ -247,6 +247,30 @@ export interface Subscription {
   updated_at: string;
 }
 
+// ─── Regions ──────────────────────────────────────────────────────────────────
+
+export interface Region {
+  /** ISO 3166-1 alpha-2, as TMDB expects it. */
+  code: string;
+  flag: string;
+  /** Full name, for settings screens. */
+  label: string;
+  /** Abbreviation, for the compact header picker. */
+  short: string;
+}
+
+/** Regions offered for release-date filtering, in display order. */
+export const REGIONS: Region[] = [
+  { code: "US", flag: "🇺🇸", label: "United States", short: "US" },
+  { code: "GB", flag: "🇬🇧", label: "United Kingdom", short: "GB" },
+  { code: "CA", flag: "🇨🇦", label: "Canada", short: "CAN" },
+  { code: "AU", flag: "🇦🇺", label: "Australia", short: "AU" },
+  { code: "DE", flag: "🇩🇪", label: "Germany", short: "DE" },
+  { code: "FR", flag: "🇫🇷", label: "France", short: "FR" },
+];
+
+export const DEFAULT_REGION = "US";
+
 // ─── Watch status display ─────────────────────────────────────────────────────
 
 /** Human-readable labels for each watch status. */
