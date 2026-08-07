@@ -1,13 +1,13 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import { BookMarked, BookPlus } from "lucide-react";
 
-import type { MediaType, WatchlistItem } from "@/types";
+import { Button } from "@/components/ui/button";
 
 import { addToWatchlist, removeFromWatchlist } from "@/lib/actions/watchlist";
-import { Button } from "@/components/ui/button";
+import type { MediaType, WatchlistItem } from "@/types";
 
 interface Props {
   existingItem?: Pick<WatchlistItem, "status"> | null;
@@ -24,18 +24,32 @@ function AddToWatchlistButton({
 }: Props) {
   const [pending, startTransition] = useTransition();
 
+  // Own the state this button changes rather than waiting for the server.
+  // Neither revalidatePath on this route nor router.refresh() relabels the
+  // button: the refetch it triggers comes back with the pre-click markup, so
+  // the click looked like it did nothing until a manual reload.
+  const [isInWatchlist, setIsInWatchlist] = useState(!!existingItem);
+  const [serverItem, setServerItem] = useState(existingItem);
+
+  // Re-sync if the server does send a new value — navigating back to a page
+  // whose row was removed elsewhere, say.
+  if (existingItem !== serverItem) {
+    setServerItem(existingItem);
+    setIsInWatchlist(!!existingItem);
+  }
+
   if (!isLoggedIn) {
     return null;
   }
-
-  const isInWatchlist = !!existingItem;
 
   const handleClick = () => {
     startTransition(async () => {
       if (isInWatchlist) {
         await removeFromWatchlist(tmdbId, mediaType);
+        setIsInWatchlist(false);
       } else {
         await addToWatchlist(tmdbId, mediaType);
+        setIsInWatchlist(true);
       }
     });
   };
@@ -45,7 +59,9 @@ function AddToWatchlistButton({
       aria-label={isInWatchlist ? "Remove from watchlist" : "Add to watchlist"}
       disabled={pending}
       onClick={handleClick}
-      size="sm"
+      // Matches TrailerButton, which sits beside this on both detail pages and
+      // defaults to lg. At sm this rendered 32px against its 40px.
+      size="lg"
       variant={isInWatchlist ? "default" : "outline"}
     >
       {isInWatchlist ? (

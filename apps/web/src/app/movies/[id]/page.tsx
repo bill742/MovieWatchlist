@@ -9,8 +9,10 @@ import { Calendar, Clock, Star } from "lucide-react";
 import { CastAndCrewInfo } from "@/components/movies/cast-and-crew-info";
 import { TrailerButton } from "@/components/movies/trailer-button";
 import { Badge } from "@/components/ui/badge";
+import { AddToWatchlistButton } from "@/components/watchlist/add-button";
 
 import { getCastAndCrew, getMovie, getMovieTrailer } from "@/data/loaders";
+import { createClient } from "@/lib/supabase/server";
 import type { Genre } from "@/types";
 
 // Get movie ID from headers
@@ -88,6 +90,22 @@ const SingleMovie = async () => {
 
   // Check if trailer is available
   const trailerKey = await getMovieTrailer(id);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  let existingItem = null;
+  if (user) {
+    const { data } = await supabase
+      .from("watchlist_items")
+      .select("status")
+      .eq("user_id", user.id)
+      .eq("tmdb_id", movie.id)
+      .eq("media_type", "movie")
+      .single();
+    existingItem = data;
+  }
 
   return (
     <ViewTransition default="none" enter="slide-up">
@@ -206,15 +224,12 @@ const SingleMovie = async () => {
                     trailerKey={trailerKey}
                   />
                 )}
-                {/* Features to add later */}
-                {/* <Button size="lg" variant="outline" className="gap-2">
-                <Bookmark className="h-5 w-5" />
-                Add to Watchlist
-              </Button>
-              <Button size="lg" variant="ghost" className="gap-2">
-                <Share2 className="h-5 w-5" />
-                Share
-              </Button> */}
+                <AddToWatchlistButton
+                  existingItem={existingItem}
+                  isLoggedIn={!!user}
+                  mediaType="movie"
+                  tmdbId={movie.id}
+                />
               </div>
 
               {castAndCrew && castAndCrew.cast.length > 0 && (

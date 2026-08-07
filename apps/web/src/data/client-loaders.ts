@@ -1,4 +1,4 @@
-import type { Movie, TVShow } from "@/types";
+import type { Movie, MultiSearchItem, TVShow } from "@/types";
 
 /**
  * Browser-side counterparts to src/data/loaders.ts and src/data/tv-loaders.ts.
@@ -57,8 +57,12 @@ export function getMovieTrailer(id: string): Promise<string | null> {
   return fetchTrailerKey(`/api/movies/${encodeURIComponent(id)}/trailer`);
 }
 
-export function getSearchResults(term: string): Promise<Movie[] | null> {
-  return fetchJSON<Movie[]>(`/api/search?term=${encodeURIComponent(term)}`);
+export function getSearchResults(
+  term: string
+): Promise<MultiSearchItem[] | null> {
+  return fetchJSON<MultiSearchItem[]>(
+    `/api/search?term=${encodeURIComponent(term)}`
+  );
 }
 
 export function getTrendingTV(): Promise<TVShow[] | null> {

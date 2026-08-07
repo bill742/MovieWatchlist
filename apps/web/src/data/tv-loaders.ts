@@ -4,7 +4,6 @@ import { cache } from "react";
 
 import type {
   CastAndCrew,
-  MultiSearchItem,
   TVSeason,
   TVShow,
 } from "@/types";
@@ -86,16 +85,5 @@ export const getTVSearchResults = cache(
     return fetchAPIList<TVShow>(
       `${BASE_URL}/search/tv?query=${encodeURIComponent(term)}&include_adult=false&language=en-US&page=1`,
     );
-  },
-);
-
-export const getMultiSearchResults = cache(
-  async (term: string): Promise<MultiSearchItem[] | null> => {
-    if (!BASE_URL) return null;
-    const results = await fetchAPIList<MultiSearchItem>(
-      `${BASE_URL}/search/multi?query=${encodeURIComponent(term)}&include_adult=false&language=en-US&page=1`,
-    );
-    // Filter to movies and TV only (exclude people)
-    return results?.filter((r) => r.media_type === "movie" || r.media_type === "tv") ?? null;
   },
 );

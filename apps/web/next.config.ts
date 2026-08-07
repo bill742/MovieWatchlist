@@ -1,15 +1,20 @@
-import path from "path";
 import type { NextConfig } from "next";
+
+import path from "path";
 
 const monorepoRoot = path.join(__dirname, "../..");
 
 const nextConfig: NextConfig = {
   images: {
-    // Bypass Vercel Image Optimization for TMDB images: the custom loader
-    // returns TMDB's own pre-sized CDN URLs, so no transformations are billed.
-    // See src/lib/tmdb-image-loader.ts. `remotePatterns` is retained so the
-    // config still documents the allowed host and works if the loader is
-    // reverted (it is ignored while a custom loader is active).
+    // Bypass the platform image optimizer for TMDB images — Netlify's Image
+    // CDN now, Vercel's before the move: the custom loader returns TMDB's own
+    // pre-sized CDN URLs, so no transformations are billed. See
+    // src/lib/tmdb-image-loader.ts.
+    //
+    // `remotePatterns` is ignored while a custom loader is active, but kept
+    // deliberately: Netlify's Next runtime maps it to the Image CDN's
+    // `remote_images` allowlist, and that allowlist is strict — remove the
+    // loader without it and every TMDB image 404s rather than falling back.
     loader: "custom",
     loaderFile: "./src/lib/tmdb-image-loader.ts",
     remotePatterns: [

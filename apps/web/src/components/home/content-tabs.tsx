@@ -6,6 +6,7 @@ import { Clapperboard, Tv } from "lucide-react";
 
 import { RegionSelect } from "@/components/header/region-select";
 import { MovieFetcher } from "@/components/movies/movie-fetcher";
+import { TabButton } from "@/components/tab-button";
 import { TVFetcher } from "@/components/tv/tv-fetcher";
 
 type Tab = "movies" | "tv";
@@ -39,32 +40,6 @@ function ContentTabs() {
 
       {activeTab === "movies" ? <MovieFetcher /> : <TVFetcher />}
     </div>
-  );
-}
-
-function TabButton({
-  active,
-  icon,
-  label,
-  onClick,
-}: {
-  active: boolean;
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-        active
-          ? "bg-primary text-primary-foreground shadow-sm"
-          : "text-muted-foreground hover:text-foreground"
-      }`}
-    >
-      {icon}
-      {label}
-    </button>
   );
 }
 

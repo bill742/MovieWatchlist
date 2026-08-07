@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import { useRouter } from "next/navigation";
 
 import { SearchIcon, X } from "lucide-react";
@@ -19,7 +20,7 @@ function Search({ onSubmit }: SearchProps = {}) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    router.push(`/search?term=${term}`);
+    router.push(`/search?term=${encodeURIComponent(term)}`);
     setTerm("");
     onSubmit?.();
   };
@@ -30,13 +31,16 @@ function Search({ onSubmit }: SearchProps = {}) {
 
   return (
     <div className="md:w-60% flex w-full p-0 md:p-4">
-      <form id="searchForm" onSubmit={handleSubmit}>
+      {/* action + name keep this a working GET form before React hydrates;
+          handleSubmit takes over once it has. */}
+      <form id="searchForm" action="/search" onSubmit={handleSubmit}>
         <div className="flex w-full gap-4">
           <Input
-            placeholder="Search by Movie Title"
+            placeholder="Search by Title"
             value={term}
             onChange={(e) => setTerm(e.target.value)}
             id="search"
+            name="term"
           />
           {term && (
             <Button
@@ -49,7 +53,7 @@ function Search({ onSubmit }: SearchProps = {}) {
               <X className="h-4 w-4" />
             </Button>
           )}
-          <Button type="submit" aria-label="Search movies">
+          <Button type="submit" aria-label="Search movies and TV shows">
             <SearchIcon className="h-4 w-4" />
             <span className="sr-only">Search</span>
           </Button>

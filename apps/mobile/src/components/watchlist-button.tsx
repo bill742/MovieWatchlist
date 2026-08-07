@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Modal, Pressable, Text, View } from "react-native";
 import type { MediaType, WatchStatus } from "@moviewatchlist/shared";
+import {
+  WATCH_STATUS_LABELS,
+  WATCH_STATUS_OPTIONS,
+} from "@moviewatchlist/shared";
 
 import {
   addToWatchlist,
@@ -8,7 +12,6 @@ import {
   removeFromWatchlist,
   updateWatchStatus,
 } from "@/lib/watchlist";
-import { WATCH_STATUS_LABELS, WATCH_STATUS_OPTIONS } from "@/lib/watch-status";
 
 interface WatchlistButtonProps {
   tmdbId: number;

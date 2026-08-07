@@ -4,24 +4,28 @@ import { useTransition } from "react";
 
 import { X } from "lucide-react";
 
-import type { MediaType } from "@/types";
+import { Button } from "@/components/ui/button";
 
 import { removeFromWatchlist } from "@/lib/actions/watchlist";
-import { Button } from "@/components/ui/button";
+import type { MediaType } from "@/types";
 
 interface Props {
   mediaType: MediaType;
+  /** Title of the row this belongs to, so each button is distinguishable. */
+  title: string;
   tmdbId: number;
 }
 
-function RemoveFromWatchlistButton({ mediaType, tmdbId }: Props) {
+function RemoveFromWatchlistButton({ mediaType, title, tmdbId }: Props) {
   const [pending, startTransition] = useTransition();
 
   return (
     <Button
-      aria-label="Remove from watchlist"
+      aria-label={`Remove ${title} from watchlist`}
       disabled={pending}
-      onClick={() => startTransition(() => removeFromWatchlist(tmdbId, mediaType))}
+      onClick={() =>
+        startTransition(() => removeFromWatchlist(tmdbId, mediaType))
+      }
       size="icon"
       variant="ghost"
     >

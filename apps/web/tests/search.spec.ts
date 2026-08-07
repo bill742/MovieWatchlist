@@ -1,13 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import { submitSearch } from "./helpers/search";
+
 test.describe("Search", () => {
   test("Displays results for a valid movie title", async ({ page }) => {
     await page.goto("./");
 
-    await page.getByPlaceholder("Search by Movie Title").fill("Inception");
-    await page.getByRole("button", { name: "Search movies" }).click();
-
-    await page.waitForURL(/\/search\?term=/);
+    await submitSearch(page, "Inception");
 
     const heading = page.getByRole("heading", {
       name: 'Results for "Inception"',
@@ -26,16 +25,25 @@ test.describe("Search", () => {
   }) => {
     await page.goto("./");
 
-    await page
-      .getByPlaceholder("Search by Movie Title")
-      .fill("xyzxyzxyzqwerty12345notamovie");
-    await page.getByRole("button", { name: "Search movies" }).click();
-
-    await page.waitForURL(/\/search\?term=/);
+    await submitSearch(page, "xyzxyzxyzqwerty12345notamovie");
 
     await expect(
       page.getByRole("heading", { name: /Results for "/ })
     ).toBeVisible();
-    await expect(page.getByText("No movies found")).toBeVisible();
+    await expect(page.getByText("No results found")).toBeVisible();
+  });
+
+  test("Includes TV shows, not just movies", async ({ page }) => {
+    await page.goto("./");
+
+    // "Breaking Bad" has no film of the same name, so a /tv/ link is decisive.
+    await submitSearch(page, "Breaking Bad");
+
+    const heading = page.getByRole("heading", {
+      name: 'Results for "Breaking Bad"',
+    });
+    const results = heading.locator("xpath=ancestor::section[1]");
+
+    await expect(results.locator('a[href^="/tv/"]').first()).toBeVisible();
   });
 });

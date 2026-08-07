@@ -2,9 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 
-import { FREE_WATCHLIST_LIMIT, type MediaType, type WatchStatus } from "@/types";
-
 import { createClient } from "@/lib/supabase/server";
+import {
+  FREE_WATCHLIST_LIMIT,
+  type MediaType,
+  type WatchStatus,
+} from "@/types";
 
 async function getAuthenticatedUser() {
   const supabase = await createClient();
@@ -16,10 +19,23 @@ async function getAuthenticatedUser() {
   return { supabase, user };
 }
 
+/**
+ * The detail pages render watchlist state too, so their cached copies go stale
+ * if only /watchlist is revalidated.
+ *
+ * This does not drive the detail-page button's own label: the RSC refetch it
+ * triggers comes back with pre-click markup, so that button tracks its state
+ * locally instead.
+ */
+function revalidateWatchlist(tmdbId: number, mediaType: MediaType) {
+  revalidatePath("/watchlist");
+  revalidatePath(mediaType === "tv" ? `/tv/${tmdbId}` : `/movies/${tmdbId}`);
+}
+
 export async function addToWatchlist(
   tmdbId: number,
   mediaType: MediaType,
-  status: WatchStatus = "want_to_watch",
+  status: WatchStatus = "want_to_watch"
 ) {
   const { supabase, user } = await getAuthenticatedUser();
 
@@ -34,20 +50,25 @@ export async function addToWatchlist(
 
   if (!isPremium && (count ?? 0) >= FREE_WATCHLIST_LIMIT) {
     throw new Error(
-      `Free accounts are limited to ${FREE_WATCHLIST_LIMIT} items. Upgrade to premium for unlimited watchlist.`,
+      `Free accounts are limited to ${FREE_WATCHLIST_LIMIT} items. Upgrade to premium for unlimited watchlist.`
     );
   }
 
-  const { error } = await supabase.from("watchlist_items").upsert(
-    { media_type: mediaType, status, tmdb_id: tmdbId, user_id: user.id },
-    { onConflict: "user_id,tmdb_id,media_type" },
-  );
+  const { error } = await supabase
+    .from("watchlist_items")
+    .upsert(
+      { media_type: mediaType, status, tmdb_id: tmdbId, user_id: user.id },
+      { onConflict: "user_id,tmdb_id,media_type" }
+    );
 
   if (error) throw new Error(error.message);
-  revalidatePath("/watchlist");
+  revalidateWatchlist(tmdbId, mediaType);
 }
 
-export async function removeFromWatchlist(tmdbId: number, mediaType: MediaType) {
+export async function removeFromWatchlist(
+  tmdbId: number,
+  mediaType: MediaType
+) {
   const { supabase, user } = await getAuthenticatedUser();
 
   const { error } = await supabase
@@ -58,13 +79,13 @@ export async function removeFromWatchlist(tmdbId: number, mediaType: MediaType) 
     .eq("media_type", mediaType);
 
   if (error) throw new Error(error.message);
-  revalidatePath("/watchlist");
+  revalidateWatchlist(tmdbId, mediaType);
 }
 
 export async function updateWatchStatus(
   tmdbId: number,
   mediaType: MediaType,
-  status: WatchStatus,
+  status: WatchStatus
 ) {
   const { supabase, user } = await getAuthenticatedUser();
 
@@ -76,7 +97,7 @@ export async function updateWatchStatus(
     .eq("media_type", mediaType);
 
   if (error) throw new Error(error.message);
-  revalidatePath("/watchlist");
+  revalidateWatchlist(tmdbId, mediaType);
 }
 
 export async function getWatchlistItems() {
