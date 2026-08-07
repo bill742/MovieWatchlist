@@ -156,7 +156,6 @@ export interface FeaturedItem {
 
 export interface RegionContextType {
   region: string;
-  setRegion: (region: string) => void;
 }
 
 // ─── User / auth ──────────────────────────────────────────────────────────────

@@ -4,9 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
-import { createClient } from "@/lib/supabase/server";
 
-import { RegionProvider } from "@/lib/region-context";
+import { createClient } from "@/lib/supabase/server";
 
 import "./globals.css";
 
@@ -54,13 +53,11 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <RegionProvider>
-            <Header email={user?.email} />
-            <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              {children}
-            </main>
-            <Footer />
-          </RegionProvider>
+          <Header email={user?.email} />
+          <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {children}
+          </main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

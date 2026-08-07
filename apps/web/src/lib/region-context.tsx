@@ -1,16 +1,25 @@
 "use client";
 
-import { createContext, ReactNode,useContext, useState } from "react";
+import { ReactNode, createContext, useContext } from "react";
 
 import type { RegionContextType } from "@/types";
 
 const RegionContext = createContext<RegionContextType | undefined>(undefined);
 
-function RegionProvider({ children }: { children: ReactNode }) {
-  const [region, setRegion] = useState("US");
-
+/**
+ * Region comes from the signed-in user's profile, set on the Profile page.
+ * There was also a header dropdown that wrote to local state only, so the two
+ * disagreed and neither survived a reload.
+ */
+function RegionProvider({
+  children,
+  region,
+}: {
+  children: ReactNode;
+  region: string;
+}) {
   return (
-    <RegionContext.Provider value={{ region, setRegion }}>
+    <RegionContext.Provider value={{ region }}>
       {children}
     </RegionContext.Provider>
   );
