@@ -2,10 +2,10 @@ import { useCallback, useState } from "react";
 import { useFocusEffect } from "expo-router";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { DEFAULT_REGION, REGIONS } from "@moviewatchlist/shared";
+import { REGIONS } from "@moviewatchlist/shared";
 
 import { useAuth } from "@/lib/auth-context";
-import { getProfile, updateRegion } from "@/lib/profile";
+import { getRegion, updateRegion } from "@/lib/profile";
 
 export default function ProfileScreen() {
   const { session, signOut } = useAuth();
@@ -17,13 +17,9 @@ export default function ProfileScreen() {
     useCallback(() => {
       let active = true;
 
-      getProfile()
-        .then((profile) => {
-          if (active) setRegion(profile?.region ?? DEFAULT_REGION);
-        })
-        .catch(() => {
-          if (active) setRegion(DEFAULT_REGION);
-        });
+      getRegion().then((saved) => {
+        if (active) setRegion(saved);
+      });
 
       return () => {
         active = false;

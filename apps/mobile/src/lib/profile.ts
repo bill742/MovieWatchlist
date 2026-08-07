@@ -1,4 +1,4 @@
-import type { Profile } from "@moviewatchlist/shared";
+import { DEFAULT_REGION, type Profile } from "@moviewatchlist/shared";
 
 import { supabase } from "./supabase";
 
@@ -30,6 +30,29 @@ export async function getProfile(): Promise<Profile | null> {
   return data as Profile;
 }
 
+/**
+ * Region is read on every Browse focus but changes about once per account, so
+ * it is held in memory after the first read rather than re-queried each time.
+ *
+ * The cost is staleness in one direction: changing region on the web app is not
+ * picked up here until the next launch or sign-in. Writes made on this device
+ * update the cache directly, so those are immediate.
+ */
+let cachedRegion: string | null = null;
+
+export async function getRegion(): Promise<string> {
+  if (cachedRegion !== null) return cachedRegion;
+
+  const profile = await getProfile().catch(() => null);
+  cachedRegion = profile?.region ?? DEFAULT_REGION;
+  return cachedRegion;
+}
+
+/** Called on sign-out so the next account does not inherit this one's region. */
+export function clearRegionCache(): void {
+  cachedRegion = null;
+}
+
 /** Shared with the web app, which reads the same column for its own filtering. */
 export async function updateRegion(region: string): Promise<void> {
   const userId = await requireUserId();
@@ -39,4 +62,5 @@ export async function updateRegion(region: string): Promise<void> {
     .eq("id", userId);
 
   if (error) throw new Error(error.message);
+  cachedRegion = region;
 }

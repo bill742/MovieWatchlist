@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import {
   ActivityIndicator,
@@ -8,10 +8,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { DEFAULT_REGION, type Movie, type TVShow } from "@moviewatchlist/shared";
+import type { Movie, TVShow } from "@moviewatchlist/shared";
 
 import { PosterCard } from "@/components/poster-card";
-import { getProfile } from "@/lib/profile";
+import { getRegion } from "@/lib/profile";
 import { tmdb } from "@/lib/tmdb";
 
 function Row<T>({
@@ -62,15 +62,18 @@ export default function BrowseScreen() {
   const [onTheAir, setOnTheAir] = useState<TVShow[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Refetches on focus so returning from Profile with a new region applies
-  // without restarting the app.
+  // Region is cached in memory, so on most focuses this resolves without any
+  // I/O and the early return means no TMDB requests either. Changing it in
+  // Profile updates the cache, which is what makes this refetch.
+  const loadedRegion = useRef<string | null>(null);
+
   useFocusEffect(
     useCallback(() => {
       let active = true;
 
       (async () => {
-        const profile = await getProfile().catch(() => null);
-        const region = profile?.region ?? DEFAULT_REGION;
+        const region = await getRegion();
+        if (!active || loadedRegion.current === region) return;
 
         const [movies, playing, tv, air] = await Promise.all([
           tmdb.getTrendingMovies(),
@@ -85,6 +88,7 @@ export default function BrowseScreen() {
         setTrendingTV(tv ?? []);
         setOnTheAir(air ?? []);
         setLoading(false);
+        loadedRegion.current = region;
       })();
 
       return () => {

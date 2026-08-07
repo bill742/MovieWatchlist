@@ -7,6 +7,7 @@ import {
 } from "react";
 import type { Session } from "@supabase/supabase-js";
 
+import { clearRegionCache } from "./profile";
 import { supabase } from "./supabase";
 
 interface AuthContextValue {
@@ -56,6 +57,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
   async function signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+    // Otherwise the next account to sign in on this device inherits it.
+    clearRegionCache();
   }
 
   return (
