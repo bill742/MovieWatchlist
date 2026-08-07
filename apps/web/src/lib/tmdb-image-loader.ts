@@ -5,8 +5,12 @@
  *
  * TMDB already serves pre-generated, CDN-cached renditions at fixed size
  * segments (e.g. `https://image.tmdb.org/t/p/w500/xyz.jpg`). Returning those
- * URLs directly means Vercel's Image Optimization is never invoked, so we are
- * not billed for transformations — TMDB's CDN does the resizing for free.
+ * URLs directly means the host's image optimizer — Netlify's Image CDN here,
+ * Vercel's before it — is never invoked, so nothing is billed for
+ * transformations and TMDB's CDN does the resizing for free.
+ *
+ * The tradeoff is that we serve whatever TMDB stores (JPEG) rather than the
+ * AVIF/WebP an optimizer would negotiate per browser.
  *
  * We snap the width `next/image` asks for up to the nearest size TMDB
  * publishes, so each screen gets an appropriately sized file and the generated
