@@ -49,7 +49,7 @@ test.describe("Movie detail page", () => {
 
 		// Click the first movie card on the home page
 		const firstMovieLink = page
-			.getByRole("heading", { name: "Now Playing" })
+			.getByRole("heading", { name: "In Theaters" })
 			.locator("xpath=ancestor::section[1]")
 			.getByRole("link")
 			.first();
