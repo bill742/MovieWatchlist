@@ -1,11 +1,11 @@
 "use client";
 
+import { useEffect, useState, useTransition } from "react";
+
 import Link from "next/link";
-import { useTransition } from "react";
 
 import { BookMarked, LogIn, LogOut, User } from "lucide-react";
 
-import { signout } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,12 +15,41 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface Props {
-  email: string | null;
-}
+import { signout } from "@/app/auth/actions";
+import { createClient } from "@/lib/supabase/client";
 
-function UserMenu({ email }: Props) {
+function UserMenu() {
   const [pending, startTransition] = useTransition();
+  // `undefined` means "not resolved yet" — distinct from `null` (signed out),
+  // so the first paint renders neutral space rather than flashing "Sign in" at
+  // a user who is in fact signed in.
+  const [email, setEmail] = useState<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    const supabase = createClient();
+    let active = true;
+
+    supabase.auth.getUser().then(({ data }) => {
+      if (active) setEmail(data.user?.email ?? null);
+    });
+
+    // Keeps the header honest after sign-in/sign-out without a reload, which
+    // the server-rendered email prop used to depend on.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setEmail(session?.user?.email ?? null);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  if (email === undefined) {
+    return <div aria-hidden className="h-9 w-9" />;
+  }
 
   if (!email) {
     return (
@@ -41,7 +70,7 @@ function UserMenu({ email }: Props) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <div className="px-2 py-1.5 text-xs text-muted-foreground truncate">
+        <div className="text-muted-foreground truncate px-2 py-1.5 text-xs">
           {email}
         </div>
         <DropdownMenuSeparator />

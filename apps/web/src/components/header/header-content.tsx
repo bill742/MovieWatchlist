@@ -2,15 +2,14 @@ import { Search } from "./search";
 import { UserMenu } from "./user-menu";
 
 interface HeaderContentProps {
-  email?: string | null;
   onSearchSubmit?: () => void;
 }
 
-function HeaderContent({ email, onSearchSubmit }: HeaderContentProps = {}) {
+function HeaderContent({ onSearchSubmit }: HeaderContentProps = {}) {
   return (
     <>
       <Search onSubmit={onSearchSubmit} />
-      <UserMenu email={email ?? null} />
+      <UserMenu />
     </>
   );
 }

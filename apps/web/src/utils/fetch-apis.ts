@@ -3,6 +3,17 @@ import "server-only";
 import type { Movie } from "@/types";
 
 /**
+ * How long a TMDB response stays fresh in Next's data cache.
+ *
+ * This matters more than it looks. Since Next 15 `fetch` defaults to
+ * `no-store`, and a single uncached fetch opts its whole route into dynamic
+ * rendering — which is why every page in this app was server-rendered per
+ * request, and why `export const revalidate` on the detail pages did nothing
+ * until this was set. An hour is well inside how often TMDB list data moves.
+ */
+const TMDB_REVALIDATE_SECONDS = 3600;
+
+/**
  * Request options shared by every TMDB call.
  *
  * TMDB_API_KEY is deliberately not prefixed with NEXT_PUBLIC_ — the read
@@ -10,13 +21,16 @@ import type { Movie } from "@/types";
  * the route handlers in src/app/api instead. The `server-only` import above
  * turns an accidental client import of this module into a build error.
  */
-export function tmdbRequestOptions(): RequestInit {
+export function tmdbRequestOptions(
+  revalidate: number = TMDB_REVALIDATE_SECONDS
+): RequestInit {
   return {
     headers: {
       Authorization: `Bearer ${process.env.TMDB_API_KEY || ""}`,
       accept: "application/json",
     },
     method: "GET",
+    next: { revalidate },
   };
 }
 
