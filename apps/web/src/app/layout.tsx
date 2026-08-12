@@ -4,9 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
-import { createClient } from "@/lib/supabase/server";
-
-import { RegionProvider } from "@/lib/region-context";
 
 import "./globals.css";
 
@@ -33,16 +30,21 @@ export const metadata: Metadata = {
   title: `${process.env.NEXT_PUBLIC_SITE_NAME} - Track Premiere Dates & Discover Films`,
 };
 
-export default async function RootLayout({
+/**
+ * Deliberately synchronous and cookie-free.
+ *
+ * This layout used to await `supabase.auth.getUser()` to pass an email into the
+ * header. Reading cookies in the root layout opts *every* route in the app out
+ * of static rendering, so nothing could be CDN-cached and each page view cost a
+ * function invocation — enough to exhaust the plan's monthly allowance. The
+ * header now resolves the session in the browser instead; keep server-side auth
+ * reads inside the routes that actually gate on them.
+ */
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -54,13 +56,11 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <RegionProvider>
-            <Header email={user?.email} />
-            <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              {children}
-            </main>
-            <Footer />
-          </RegionProvider>
+          <Header />
+          <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {children}
+          </main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

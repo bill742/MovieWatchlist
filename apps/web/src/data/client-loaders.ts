@@ -43,6 +43,12 @@ export function getNowPlayingMovies(region: string): Promise<Movie[] | null> {
   );
 }
 
+export function getReleaseRows(
+  region: string
+): Promise<{ digital: Movie[]; theatrical: Movie[] } | null> {
+  return fetchJSON(`/api/movies/releases?region=${encodeURIComponent(region)}`);
+}
+
 export function getUpcomingMovies(region: string): Promise<Movie[] | null> {
   return fetchJSON<Movie[]>(
     `/api/movies/upcoming?region=${encodeURIComponent(region)}`

@@ -7,7 +7,7 @@ import { HeroBanner } from "@/components/hero/hero-banner";
 import {
   getMovie,
   getMovieTrailer,
-  getNowPlayingMovies,
+  getReleaseRows,
   getTrendingMovies,
   getUpcomingMovies,
 } from "@/data/client-loaders";
@@ -23,7 +23,8 @@ function MovieFetcher() {
     item: FeaturedItem;
     trailerKey: string | null;
   } | null>(null);
-  const [nowPlayingMovies, setNowPlayingMovies] = useState<Movie[]>([]);
+  const [inTheaters, setInTheaters] = useState<Movie[]>([]);
+  const [newOnDigital, setNewOnDigital] = useState<Movie[]>([]);
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,14 +33,13 @@ function MovieFetcher() {
 
     const fetchMovies = async () => {
       try {
-        const [trendingData, nowPlayingData, upcomingData] = await Promise.all([
+        const [trendingData, releaseRows, upcomingData] = await Promise.all([
           getTrendingMovies(),
-          getNowPlayingMovies(region),
+          getReleaseRows(region),
           getUpcomingMovies(region),
         ]);
 
-        if (!nowPlayingData)
-          throw new Error("Failed to fetch now playing movies");
+        if (!releaseRows) throw new Error("Failed to fetch releases");
         if (!upcomingData) throw new Error("Failed to fetch upcoming movies");
 
         let featuredResult: typeof featured = null;
@@ -63,14 +63,16 @@ function MovieFetcher() {
 
         startTransition(() => {
           setFeatured(featuredResult);
-          setNowPlayingMovies(nowPlayingData.slice(0, 12));
+          setInTheaters(releaseRows.theatrical.slice(0, 12));
+          setNewOnDigital(releaseRows.digital.slice(0, 12));
           setUpcomingMovies(upcomingData.slice(0, 12));
           setLoading(false);
         });
       } catch {
         startTransition(() => {
           setFeatured(null);
-          setNowPlayingMovies([]);
+          setInTheaters([]);
+          setNewOnDigital([]);
           setUpcomingMovies([]);
           setLoading(false);
         });
@@ -94,7 +96,8 @@ function MovieFetcher() {
         {featured && (
           <HeroBanner item={featured.item} trailerKey={featured.trailerKey} />
         )}
-        <MovieList movies={nowPlayingMovies} heading="Now Playing" />
+        <MovieList movies={inTheaters} heading="In Theaters" />
+        <MovieList movies={newOnDigital} heading="New on Digital" />
         <MovieList movies={upcomingMovies} heading="Upcoming Releases" />
       </div>
     </ViewTransition>

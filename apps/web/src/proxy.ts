@@ -1,5 +1,6 @@
-import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+
+import { createServerClient } from "@supabase/ssr";
 
 const PROTECTED_PATHS = ["/watchlist", "/profile"];
 
@@ -37,16 +38,7 @@ async function withinTimeout<T>(work: Promise<T>, fallback: T): Promise<T> {
 }
 
 export async function proxy(request: NextRequest) {
-  // Carry the current pathname as a header so Server Components can read it
-  // without accessing dynamic request params (used for metadata generation).
-  let response = NextResponse.next({
-    request: {
-      headers: new Headers({
-        ...Object.fromEntries(request.headers),
-        "x-current-path": request.nextUrl.pathname,
-      }),
-    },
-  });
+  let response = NextResponse.next({ request });
 
   // Refresh the Supabase session on every request so it never expires silently.
   const supabase = createServerClient(
@@ -59,16 +51,11 @@ export async function proxy(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
+            request.cookies.set(name, value)
           );
           response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, options, value }) =>
-            response.cookies.set(name, value, options),
-          );
-          // Re-apply the x-current-path header after creating a new response.
-          response.headers.set(
-            "x-current-path",
-            request.nextUrl.pathname,
+            response.cookies.set(name, value, options)
           );
         },
       },
@@ -79,7 +66,7 @@ export async function proxy(request: NextRequest) {
             signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
           }),
       },
-    },
+    }
   );
 
   const user = await withinTimeout(
@@ -87,11 +74,11 @@ export async function proxy(request: NextRequest) {
       .getUser()
       .then(({ data }) => data.user)
       .catch(() => null),
-    null,
+    null
   );
 
   const isProtected = PROTECTED_PATHS.some((p) =>
-    request.nextUrl.pathname.startsWith(p),
+    request.nextUrl.pathname.startsWith(p)
   );
 
   if (!user && isProtected) {
@@ -105,11 +92,15 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // The public TMDB routes are excluded deliberately: they read nothing
-  // user-specific, so running session refresh on them only added a Supabase
-  // round trip per request. /auth/callback is NOT excluded — it needs the
-  // session handling to complete a sign-in.
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/(?:movies|tv|search|tmdb)(?:/|$)|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  // Allowlisted rather than excluded. This previously matched nearly every
+  // request, so each page view — including anonymous and crawler traffic on
+  // fully public pages — cost an edge invocation, and any request carrying a
+  // session cookie also cost a Supabase round trip. Only the gated routes and
+  // the sign-in callback actually need this to run.
+  //
+  // The tradeoff: a signed-in user browsing only public pages no longer gets a
+  // server-side session refresh. supabase-js refreshes in the browser, and the
+  // refresh still happens the moment they touch a protected route, so the
+  // session outliving its access token is not a practical concern.
+  matcher: ["/watchlist/:path*", "/profile/:path*", "/auth/callback"],
 };

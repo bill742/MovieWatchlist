@@ -156,12 +156,18 @@ export interface FeaturedItem {
 
 export interface RegionContextType {
   region: string;
-  setRegion: (region: string) => void;
 }
 
 // ─── User / auth ──────────────────────────────────────────────────────────────
 
 export type Theme = "light" | "dark" | "system";
+
+/** Selectable themes, in the order they should appear in pickers. */
+export const THEME_OPTIONS: { label: string; value: Theme }[] = [
+  { label: "System default", value: "system" },
+  { label: "Light", value: "light" },
+  { label: "Dark", value: "dark" },
+];
 
 export interface Profile {
   id: string;
@@ -246,6 +252,30 @@ export interface Subscription {
   created_at: string;
   updated_at: string;
 }
+
+// ─── Regions ──────────────────────────────────────────────────────────────────
+
+export interface Region {
+  /** ISO 3166-1 alpha-2, as TMDB expects it. */
+  code: string;
+  flag: string;
+  /** Full name, for settings screens. */
+  label: string;
+  /** Abbreviation, for the compact header picker. */
+  short: string;
+}
+
+/** Regions offered for release-date filtering, in display order. */
+export const REGIONS: Region[] = [
+  { code: "US", flag: "🇺🇸", label: "United States", short: "US" },
+  { code: "GB", flag: "🇬🇧", label: "United Kingdom", short: "GB" },
+  { code: "CA", flag: "🇨🇦", label: "Canada", short: "CAN" },
+  { code: "AU", flag: "🇦🇺", label: "Australia", short: "AU" },
+  { code: "DE", flag: "🇩🇪", label: "Germany", short: "DE" },
+  { code: "FR", flag: "🇫🇷", label: "France", short: "FR" },
+];
+
+export const DEFAULT_REGION = "US";
 
 // ─── Watch status display ─────────────────────────────────────────────────────
 

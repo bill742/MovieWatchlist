@@ -71,6 +71,75 @@ export const getNowPlayingMovies = cache(
   }
 );
 
+/** How far back a release still counts as "current" for the home rows. */
+const RELEASE_WINDOW_DAYS = 45;
+
+function releaseWindow(): { from: string; to: string } {
+  const to = new Date();
+  const from = new Date(to);
+  from.setDate(from.getDate() - RELEASE_WINDOW_DAYS);
+
+  return {
+    from: from.toISOString().slice(0, 10),
+    to: to.toISOString().slice(0, 10),
+  };
+}
+
+/** TMDB release types: 2 and 3 are theatrical (limited and wide), 4 is digital. */
+async function discoverByReleaseType(
+  region: string,
+  releaseTypes: string
+): Promise<Movie[] | null> {
+  const { from, to } = releaseWindow();
+  const query = new URLSearchParams({
+    include_adult: "false",
+    language: "en-US",
+    page: "1",
+    region,
+    "release_date.gte": from,
+    "release_date.lte": to,
+    sort_by: "popularity.desc",
+    with_release_type: releaseTypes,
+  });
+
+  return fetchAPIList<Movie>(`${BASE_URL}/discover/movie?${query}`);
+}
+
+/**
+ * The two home rows: what is in cinemas, and what has just landed digitally.
+ *
+ * /movie/now_playing cannot make this distinction — it is one theatrical-ish
+ * list — so both come from /discover/movie filtered by release type.
+ *
+ * A film with both a theatrical and a digital release inside the window is
+ * returned by both queries, so theatrical wins and is removed from digital.
+ * Otherwise the same poster appears twice on one page.
+ */
+export const getReleaseRows = cache(
+  async (
+    region: string
+  ): Promise<{ digital: Movie[]; theatrical: Movie[] } | null> => {
+    if (!BASE_URL) {
+      console.error("NEXT_PUBLIC_API_URL is not defined");
+      return null;
+    }
+
+    const [theatrical, digital] = await Promise.all([
+      discoverByReleaseType(region, "2|3"),
+      discoverByReleaseType(region, "4"),
+    ]);
+
+    if (!theatrical || !digital) return null;
+
+    const inCinemas = new Set(theatrical.map((movie) => movie.id));
+
+    return {
+      digital: digital.filter((movie) => !inCinemas.has(movie.id)),
+      theatrical,
+    };
+  }
+);
+
 /**
  * Fetches upcoming movies from TMDB API
  * Filters to show only movies releasing tomorrow or later

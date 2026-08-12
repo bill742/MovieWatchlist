@@ -8,12 +8,18 @@ import { Calendar, Star, Tv } from "lucide-react";
 
 import { CastAndCrewInfo } from "@/components/movies/cast-and-crew-info";
 import { TrailerButton } from "@/components/movies/trailer-button";
-import { AddToWatchlistButton } from "@/components/watchlist/add-button";
 import { Badge } from "@/components/ui/badge";
+import { AddToWatchlistButton } from "@/components/watchlist/add-button";
 
 import { getTVCastAndCrew, getTVShow, getTVTrailer } from "@/data/tv-loaders";
-import { createClient } from "@/lib/supabase/server";
 import type { Genre } from "@/types";
+
+/** See the notes on the movie detail page — same reasoning for both exports. */
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -51,20 +57,6 @@ export default async function TVShowPage({
     );
   }
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  let existingItem = null;
-  if (user) {
-    const { data } = await supabase
-      .from("watchlist_items")
-      .select("status")
-      .eq("user_id", user.id)
-      .eq("tmdb_id", show.id)
-      .eq("media_type", "tv")
-      .single();
-    existingItem = data;
-  }
-
   const cast = credits?.cast.slice(0, 12) ?? [];
   const seasons = show.seasons.filter((s) => s.season_number > 0);
 
@@ -91,7 +83,7 @@ export default async function TVShowPage({
         </div>
 
         {/* Content */}
-        <div className="container relative -mt-48 space-y-8">
+        <div className="relative container -mt-48 space-y-8">
           <div className="flex flex-col gap-8 md:flex-row">
             {/* Poster */}
             <div className="shrink-0">
@@ -170,14 +162,12 @@ export default async function TVShowPage({
 
               <div className="flex flex-wrap gap-3">
                 {trailerKey && (
-                  <TrailerButton movieTitle={show.name} trailerKey={trailerKey} />
+                  <TrailerButton
+                    movieTitle={show.name}
+                    trailerKey={trailerKey}
+                  />
                 )}
-                <AddToWatchlistButton
-                  existingItem={existingItem}
-                  isLoggedIn={!!user}
-                  mediaType="tv"
-                  tmdbId={show.id}
-                />
+                <AddToWatchlistButton mediaType="tv" tmdbId={show.id} />
               </div>
 
               {/* Seasons grid */}

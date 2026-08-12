@@ -1,23 +1,18 @@
-import { expect, type Page } from "@playwright/test";
+import { type Page, expect } from "@playwright/test";
 
 /**
- * Switches the page to dark mode and waits for it to settle.
+ * Puts the page in dark mode so a scan can cover it.
  *
- * Playwright's click leaves the pointer resting on the trigger, so Radix keeps
- * the tooltip open. Its content portals to <body>, outside any landmark, and
- * axe's `region` rule flags it. That made the accessibility scans intermittent:
- * they failed only when the scan started before the tooltip finished animating
- * in. Moving the pointer away and waiting for the tooltip to unmount lets the
- * scans see the page at rest.
+ * This used to click the header toggle, which no longer exists — theme is set
+ * on the Profile page now. Driving it from there would mean writing to the one
+ * profile row the account has, which the browser projects share, so parallel
+ * runs would fight over it. Writing the key next-themes reads keeps each test
+ * context independent, and these specs are scanning a dark page rather than
+ * testing the control that selects it.
  */
 export async function switchToDarkMode(page: Page) {
-  const themeToggle = page.locator("#themeToggle").first();
-
-  await themeToggle.click();
-
-  await page.mouse.move(0, 0);
-  await themeToggle.blur();
-  await expect(page.getByRole("tooltip")).toHaveCount(0);
+  await page.evaluate(() => window.localStorage.setItem("theme", "dark"));
+  await page.reload();
 
   await expect(page.locator("html")).toHaveClass(/dark/);
 }

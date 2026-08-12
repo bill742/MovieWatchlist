@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { useCallback, useRef, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   ScrollView,
   Text,
   View,
@@ -12,10 +11,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { Movie, TVShow } from "@moviewatchlist/shared";
 
 import { PosterCard } from "@/components/poster-card";
-import { useAuth } from "@/lib/auth-context";
+import { getRegion } from "@/lib/profile";
 import { tmdb } from "@/lib/tmdb";
-
-const REGION = "US";
 
 function Row<T>({
   data,
@@ -59,34 +56,46 @@ function Row<T>({
 
 export default function BrowseScreen() {
   const router = useRouter();
-  const { signOut } = useAuth();
   const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
   const [nowPlaying, setNowPlaying] = useState<Movie[]>([]);
   const [trendingTV, setTrendingTV] = useState<TVShow[]>([]);
   const [onTheAir, setOnTheAir] = useState<TVShow[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let active = true;
+  // Region is cached in memory, so on most focuses this resolves without any
+  // I/O and the early return means no TMDB requests either. Changing it in
+  // Profile updates the cache, which is what makes this refetch.
+  const loadedRegion = useRef<string | null>(null);
 
-    Promise.all([
-      tmdb.getTrendingMovies(),
-      tmdb.getNowPlayingMovies(REGION),
-      tmdb.getTrendingTV(),
-      tmdb.getOnTheAirTV(REGION),
-    ]).then(([movies, playing, tv, air]) => {
-      if (!active) return;
-      setTrendingMovies(movies ?? []);
-      setNowPlaying(playing ?? []);
-      setTrendingTV(tv ?? []);
-      setOnTheAir(air ?? []);
-      setLoading(false);
-    });
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
 
-    return () => {
-      active = false;
-    };
-  }, []);
+      (async () => {
+        const region = await getRegion();
+        if (!active || loadedRegion.current === region) return;
+
+        const [movies, playing, tv, air] = await Promise.all([
+          tmdb.getTrendingMovies(),
+          tmdb.getNowPlayingMovies(region),
+          tmdb.getTrendingTV(),
+          tmdb.getOnTheAirTV(region),
+        ]);
+
+        if (!active) return;
+        setTrendingMovies(movies ?? []);
+        setNowPlaying(playing ?? []);
+        setTrendingTV(tv ?? []);
+        setOnTheAir(air ?? []);
+        setLoading(false);
+        loadedRegion.current = region;
+      })();
+
+      return () => {
+        active = false;
+      };
+    }, [])
+  );
 
   function openMovie(movie: Movie) {
     router.push({ params: { id: String(movie.id) }, pathname: "/movie/[id]" });
@@ -98,13 +107,8 @@ export default function BrowseScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-neutral-950" edges={["top"]}>
-      <View className="flex-row items-center justify-between px-4 py-3">
+      <View className="px-4 py-3">
         <Text className="text-2xl font-bold text-white">Browse</Text>
-        <Pressable onPress={() => signOut()}>
-          <Text className="text-sm font-semibold text-neutral-400">
-            Sign out
-          </Text>
-        </Pressable>
       </View>
 
       {loading ? (

@@ -17,11 +17,7 @@ import {
 import { HeaderContent } from "./header-content";
 import { Logo } from "./logo";
 
-interface HeaderProps {
-  email?: string | null;
-}
-
-function Header({ email }: HeaderProps = {}) {
+function Header() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -31,7 +27,7 @@ function Header({ email }: HeaderProps = {}) {
 
         {/* Desktop: Right side actions */}
         <div className="hidden items-center gap-2 md:flex">
-          <HeaderContent email={email} />
+          <HeaderContent />
         </div>
 
         {/* Mobile: Hamburger menu */}
@@ -51,7 +47,7 @@ function Header({ email }: HeaderProps = {}) {
               </SheetDescription>
             </SheetHeader>
             <div className="mt-8 flex flex-col gap-6">
-              <HeaderContent email={email} onSearchSubmit={() => setOpen(false)} />
+              <HeaderContent onSearchSubmit={() => setOpen(false)} />
             </div>
           </SheetContent>
         </Sheet>

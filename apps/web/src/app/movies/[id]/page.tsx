@@ -1,7 +1,6 @@
 import { ViewTransition } from "react";
 
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import Image from "next/image";
 
 import { Calendar, Clock, Star } from "lucide-react";
@@ -12,26 +11,37 @@ import { Badge } from "@/components/ui/badge";
 import { AddToWatchlistButton } from "@/components/watchlist/add-button";
 
 import { getCastAndCrew, getMovie, getMovieTrailer } from "@/data/loaders";
-import { createClient } from "@/lib/supabase/server";
 import type { Genre } from "@/types";
 
-// Get movie ID from headers
-async function getMovieId(): Promise<string | null> {
-  const headerList = await headers();
-  const pathname = headerList.get("x-current-path");
-  const id = pathname ? pathname.split("/").pop() : null;
-  return id || null;
+/**
+ * TMDB detail data changes rarely, and the page is now identical for every
+ * visitor, so it can be served from the CDN instead of re-rendered per request.
+ *
+ * The effective TTL is the lower of this and the TMDB fetch revalidate in
+ * utils/fetch-apis.ts, so in practice it is that hour, not a day. Past it the
+ * cached copy is still served while it re-renders in the background, so a
+ * stale entry costs a visitor nothing.
+ */
+export const revalidate = 86400;
+
+/**
+ * Empty on purpose: prerendering every TMDB id at build time is absurd, but
+ * without this export the segment is treated as fully dynamic and `revalidate`
+ * above is ignored — each visit re-renders and nothing is ever cached. Empty
+ * defers rendering to the first request for a given id, then caches it.
+ */
+export async function generateStaticParams() {
+  return [];
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const id = await getMovieId();
+type PageProps = {
+  params: Promise<{ id: string }>;
+};
 
-  if (!id) {
-    return {
-      description: "The requested movie could not be found.",
-      title: `Movie Not Found - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
-    };
-  }
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { id } = await params;
 
   const movie = await getMovie(id);
 
@@ -53,20 +63,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const SingleMovie = async () => {
-  const id = await getMovieId();
-
-  if (!id) {
-    return (
-      <div className="container mx-auto p-6">
-        <h2 className="mb-4 text-2xl font-bold">Movie not found</h2>
-        <p>
-          The movie you&apos;re looking for doesn&apos;t exist or the URL is
-          invalid.
-        </p>
-      </div>
-    );
-  }
+const SingleMovie = async ({ params }: PageProps) => {
+  const { id } = await params;
 
   const movie = await getMovie(id);
 
@@ -90,22 +88,6 @@ const SingleMovie = async () => {
 
   // Check if trailer is available
   const trailerKey = await getMovieTrailer(id);
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  let existingItem = null;
-  if (user) {
-    const { data } = await supabase
-      .from("watchlist_items")
-      .select("status")
-      .eq("user_id", user.id)
-      .eq("tmdb_id", movie.id)
-      .eq("media_type", "movie")
-      .single();
-    existingItem = data;
-  }
 
   return (
     <ViewTransition default="none" enter="slide-up">
@@ -224,12 +206,7 @@ const SingleMovie = async () => {
                     trailerKey={trailerKey}
                   />
                 )}
-                <AddToWatchlistButton
-                  existingItem={existingItem}
-                  isLoggedIn={!!user}
-                  mediaType="movie"
-                  tmdbId={movie.id}
-                />
+                <AddToWatchlistButton mediaType="movie" tmdbId={movie.id} />
               </div>
 
               {castAndCrew && castAndCrew.cast.length > 0 && (

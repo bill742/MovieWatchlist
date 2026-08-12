@@ -89,7 +89,7 @@ test.describe("Watchlist", () => {
     await expect(rowFor(page, tvPath)).toHaveCount(0);
 
     // The web page once dropped shows entirely while still counting them.
-    await page.getByRole("button", { name: "TV Shows", exact: true }).click();
+    await page.getByRole("button", { exact: true, name: "TV Shows" }).click();
     await expect(rowFor(page, tvPath)).toBeVisible();
     await expect(rowFor(page, moviePath)).toHaveCount(0);
   });
@@ -101,10 +101,10 @@ test.describe("Watchlist", () => {
     await expect(rowFor(page, moviePath)).toBeVisible();
 
     // Newly added rows default to "want to watch", so this must hide it.
-    await page.getByRole("button", { name: "Watched", exact: true }).click();
+    await page.getByRole("button", { exact: true, name: "Watched" }).click();
     await expect(rowFor(page, moviePath)).toHaveCount(0);
 
-    await page.getByRole("button", { name: "All", exact: true }).click();
+    await page.getByRole("button", { exact: true, name: "All" }).click();
     await expect(rowFor(page, moviePath)).toBeVisible();
   });
 
@@ -119,7 +119,7 @@ test.describe("Watchlist", () => {
     const { tvPath } = fixturesFor(testInfo.project.name);
 
     await page.goto("/watchlist");
-    await page.getByRole("button", { name: "TV Shows", exact: true }).click();
+    await page.getByRole("button", { exact: true, name: "TV Shows" }).click();
 
     const row = rowFor(page, tvPath);
     await row.getByRole("button", { name: /^Remove / }).click();
