@@ -28,6 +28,21 @@
     "run_worker_first": false,
   },
 
+  // No "vars" block, deliberately.
+  //
+  // Every `wrangler deploy` / `versions upload` treats this file as the source
+  // of truth for vars and deletes any plaintext variable set in the dashboard
+  // that is not listed here. Secrets are stored separately and survive, which
+  // is why TMDB_API_KEY persisted through a deploy while everything else
+  // vanished. Pass `--keep-vars` if dashboard-set vars ever need to stick.
+  //
+  // Nothing belongs here today: TMDB_API_KEY is the only value read at runtime
+  // and it is a secret. The six NEXT_PUBLIC_* variables are inlined into the
+  // bundle by `next build`, so they must be set as *build* environment
+  // variables in the Cloudflare build configuration. Adding them here would
+  // not help — by the time the Worker runs, the bundle has already baked in
+  // whatever was present at build time.
+
   // Required for ISR: the Worker calls itself to revalidate a stale page.
   "services": [
     {
