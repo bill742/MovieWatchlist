@@ -2,6 +2,22 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { createServerClient } from "@supabase/ssr";
 
+/**
+ * `middleware.ts`, deliberately, not Next 16's `proxy.ts`.
+ *
+ * Two constraints meet here. Next 16 renamed this file to `proxy.ts` and pinned
+ * it to the Node runtime with no way to configure it, while the OpenNext
+ * Cloudflare adapter supports only edge middleware and fails the build on the
+ * Node kind. Next 16 still honours `middleware.ts` for exactly this case, so
+ * the deprecated filename is the one that works on Workers.
+ *
+ * Deleting it outright is not an option: `@supabase/ssr` needs a middleware to
+ * refresh the access token, because Server Components cannot write cookies. Do
+ * that and a signed-in visitor whose token has expired is bounced to /login by
+ * the very pages that should have refreshed them.
+ *
+ * Revisit when Next ships edge-runtime support for `proxy`.
+ */
 const PROTECTED_PATHS = ["/watchlist", "/profile"];
 
 /**
@@ -37,7 +53,7 @@ async function withinTimeout<T>(work: Promise<T>, fallback: T): Promise<T> {
   }
 }
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   // Refresh the Supabase session on every request so it never expires silently.

@@ -4,6 +4,14 @@ import { expect, test } from "@playwright/test";
 const DEFAULT = "US";
 
 test.describe("Profile", () => {
+  // `updateProfile` writes region *and* theme from a single form, so the two
+  // saving tests below both rewrite the whole profile row. Run in parallel, the
+  // theme test submits its own stale region value and clobbers the region the
+  // other test just saved — which then fails on reload. Serial keeps each
+  // save/read pair intact. The skip above guards across projects; this guards
+  // within one.
+  test.describe.configure({ mode: "serial" });
+
   test("Saving preferences keeps the chosen region selected", async ({
     page,
   }, testInfo) => {

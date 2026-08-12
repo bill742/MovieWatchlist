@@ -65,6 +65,13 @@ function rowFor(page: Page, href: string) {
 }
 
 test.describe("Watchlist", () => {
+  // These tests add and remove rows on one shared Supabase account, so running
+  // them concurrently makes each one see the others' writes: beforeEach adds a
+  // fixture that a sibling has already removed, and rows vanish mid-assertion.
+  // CI never saw it (`workers: 1`), but locally `fullyParallel` spreads them
+  // across four workers and they fail in a different combination every run.
+  test.describe.configure({ mode: "serial" });
+
   test.beforeEach(async ({ page }, testInfo) => {
     const { moviePath, tvPath } = fixturesFor(testInfo.project.name);
     await setWatchlisted(page, moviePath, true);

@@ -11,6 +11,7 @@ import {
 import { getMovie } from "@/data/loaders";
 import { getTVShow } from "@/data/tv-loaders";
 import { getWatchlistItems } from "@/lib/actions/watchlist";
+import { requireUser } from "@/lib/auth";
 import type { WatchlistItem } from "@/types";
 
 export const metadata: Metadata = {
@@ -67,6 +68,8 @@ async function resolveEntries(
 }
 
 export default async function WatchlistPage() {
+  await requireUser("/watchlist");
+
   const items = await getWatchlistItems();
 
   if (items.length === 0) {

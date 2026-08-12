@@ -123,8 +123,12 @@ Expo changes fast. Key facts:
 - **Playwright** (+ `@axe-core/playwright`) for E2E and accessibility tests
 - **Data source:** TMDB API
 
-> Next.js 16 note: the request middleware lives in `src/proxy.ts` (the file/export
-> renamed from `middleware` to `proxy` in Next 16), not `middleware.ts`.
+> Next.js 16 note: there is **no request middleware**. Next 16 renamed
+> `middleware.ts` to `proxy.ts` and pinned it to the Node runtime with no way to
+> configure it, while the OpenNext Cloudflare adapter supports only edge
+> middleware — so `src/proxy.ts` was removed on the move to Cloudflare. Protected
+> routes call `requireUser()` from `src/lib/auth.ts` instead. A new protected
+> route must call it itself; nothing gates routes globally any more.
 
 ## Web directory structure
 
@@ -160,7 +164,7 @@ apps/web/src/
 │   └── utils.ts             # cn() etc.
 ├── utils/fetch-apis.ts      # generic TMDB fetch helpers (fetchAPI, fetchAPIList)
 ├── types.ts                 # re-exports @moviewatchlist/shared
-└── proxy.ts                 # session refresh + protected-route redirects
+└── lib/auth.ts              # requireUser() — per-page protected-route redirect
 ```
 
 ## Data & mutations
@@ -191,8 +195,10 @@ still a TODO.
 - `@/lib/supabase/server` — `createClient()` for RSC, server actions, and route
   handlers (async; reads/writes cookies via `next/headers`).
 - `@/lib/supabase/client` — `createClient()` for client components (browser).
-- `src/proxy.ts` refreshes the session on every request and redirects unauthenticated
-  users away from protected paths (`/watchlist`, `/profile`).
+- `requireUser(nextPath)` from `@/lib/auth` redirects to `/login?next=…` unless a
+  session is present. `/watchlist` and `/profile` call it as their first
+  statement. There is no global session refresh — supabase-js handles refresh in
+  the browser.
 
 The database schema, RLS policies, and the `handle_new_user` trigger (auto-creates a
 `profiles` row per auth user) live in `supabase/migrations/`.

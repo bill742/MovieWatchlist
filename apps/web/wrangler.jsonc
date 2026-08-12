@@ -1,0 +1,64 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  // NOTE: this must match the Worker name in your Cloudflare dashboard. If it
+  // does not, `wrangler deploy` creates a *second* Worker rather than updating
+  // the existing one.
+  "name": "moviewatchlist",
+
+  // `next build` emits .next, which is not a Worker. `opennextjs-cloudflare
+  // build` transforms it into one at .open-next/worker.js — that is the entry
+  // point wrangler was missing.
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-08-12",
+  "compatibility_flags": [
+    // Next.js and its dependencies expect Node built-ins.
+    "nodejs_compat",
+    // Lets the app fetch public URLs (TMDB, Supabase) from the Worker.
+    "global_fetch_strictly_public",
+  ],
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+    // Requests for static assets are answered before the Worker runs, so they
+    // are neither billed nor counted against the daily request limit. This is
+    // what makes the prerendered pages free to serve — leave it false unless
+    // something genuinely needs middleware in front of assets.
+    "run_worker_first": false,
+  },
+
+  // Required for ISR: the Worker calls itself to revalidate a stale page.
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "moviewatchlist",
+    },
+  ],
+
+  // Uncomment once an R2 bucket exists to give ISR somewhere to persist
+  // rendered pages. Without it every detail-page request re-renders in the
+  // Worker — see the note in open-next.config.ts.
+  // "r2_buckets": [
+  //   {
+  //     "binding": "NEXT_INC_CACHE_R2_BUCKET",
+  //     "bucket_name": "moviewatchlist-cache",
+  //   },
+  // ],
+
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": false,
+      "persist": true,
+      "head_sampling_rate": 1,
+    },
+  },
+}

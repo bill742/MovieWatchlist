@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { getProfile } from "@/lib/actions/profile";
+import { requireUser } from "@/lib/auth";
 import { DEFAULT_REGION } from "@/types";
 
 import { PreferencesForm } from "./preferences-form";
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ProfilePage() {
+  await requireUser("/profile");
+
   const profile = await getProfile();
 
   return (
