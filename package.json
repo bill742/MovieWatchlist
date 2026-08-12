@@ -5,7 +5,10 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "cf:build": "pnpm --filter @moviewatchlist/web run cf:build",
+    "cf:deploy": "pnpm --filter @moviewatchlist/web run cf:deploy",
+    "cf:upload": "pnpm --filter @moviewatchlist/web run cf:upload"
   },
   "devDependencies": {
     "turbo": "^2"

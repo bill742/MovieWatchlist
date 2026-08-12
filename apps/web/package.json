@@ -9,6 +9,7 @@
     "lint": "eslint",
     "cf:build": "opennextjs-cloudflare build",
     "cf:deploy": "opennextjs-cloudflare deploy",
+    "cf:upload": "opennextjs-cloudflare upload",
     "cf:preview": "opennextjs-cloudflare preview"
   },
   "dependencies": {
