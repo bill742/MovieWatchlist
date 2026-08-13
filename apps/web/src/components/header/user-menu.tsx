@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { BookMarked, LogIn, LogOut, User } from "lucide-react";
 
@@ -24,28 +25,46 @@ function UserMenu() {
   // so the first paint renders neutral space rather than flashing "Sign in" at
   // a user who is in fact signed in.
   const [email, setEmail] = useState<string | null | undefined>(undefined);
+  // Sign-in and sign-out are both server actions: they change the cookie and
+  // redirect, so supabase-js in this tab never performs either and
+  // onAuthStateChange stays silent. This component lives in the root layout, so
+  // it survives the redirect without remounting, and kept offering "Sign in" to
+  // someone already signed in. Detail pages looked correct only because their
+  // buttons mount fresh. Re-reading on navigation covers both directions, since
+  // each redirect is itself a navigation.
+  const pathname = usePathname();
+  // One client for the component's life. Building a new one per navigation
+  // spawns multiple GoTrue instances against the same storage.
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    const supabase = createClient();
     let active = true;
 
-    supabase.auth.getUser().then(({ data }) => {
-      if (active) setEmail(data.user?.email ?? null);
-    });
-
-    // Keeps the header honest after sign-in/sign-out without a reload, which
-    // the server-rendered email prop used to depend on.
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (active) setEmail(session?.user?.email ?? null);
+    // getSession, not getUser: this only decides what the header renders, and
+    // getUser is a round trip to the auth server on every navigation. That cost
+    // was enough to push detail pages past their load budget in Firefox. Route
+    // gating still uses requireUser() on the server, and RLS guards the data —
+    // nothing is authorized on the strength of this read.
+    supabase.auth.getSession().then(({ data }) => {
+      if (active) setEmail(data.session?.user?.email ?? null);
     });
 
     return () => {
       active = false;
-      subscription.unsubscribe();
     };
-  }, []);
+  }, [pathname, supabase]);
+
+  useEffect(() => {
+    // Catches whatever happens without a navigation: token refreshes, and
+    // sign-outs performed in another tab.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setEmail(session?.user?.email ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   if (email === undefined) {
     return <div aria-hidden className="h-9 w-9" />;
