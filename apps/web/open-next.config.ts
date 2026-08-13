@@ -19,19 +19,26 @@ import { withRegionalCache } from "@opennextjs/cloudflare/overrides/incremental-
  * app that revalidates: ISR responses are reused for up to 30 minutes and
  * refreshed in the background.
  *
- * Deliberately not configured: `tagCache`, `queue`, and `cachePurge`. Those
- * matter for on-demand revalidation, and the only `revalidatePath` calls here
- * target /profile and /watchlist, which are dynamic and never cached. The
- * detail pages revalidate on a timer, which the default queue handles through
- * the WORKER_SELF_REFERENCE binding in wrangler.jsonc.
+ * `enableCacheInterception` serves a cached ISR page without invoking
+ * NextServer at all, which is most of the work a cached hit was still doing.
+ * Two constraints, both fine here: it does not support PPR, which this app does
+ * not use, and it consults the tag cache to decide whether a path is stale.
  *
- * `enableCacheInterception` is also off. It would let cached responses return
- * before the full routing stack runs, cutting Worker time further, but it
- * interacts with middleware and this migration has produced enough surprises —
- * worth trying separately, once the cache is proven.
+ * There is no tag cache, deliberately — along with `queue` and `cachePurge`,
+ * those serve on-demand revalidation, and the only `revalidatePath` calls here
+ * target /profile and /watchlist, which are dynamic and never cached. Nothing
+ * invalidates the detail pages by tag; they revalidate on a timer, which the
+ * default queue handles through the WORKER_SELF_REFERENCE binding in
+ * wrangler.jsonc. Add a tag cache before introducing revalidateTag, or the
+ * intercepted responses will not know they are stale.
+ *
+ * Middleware is unaffected: it matches only /watchlist, /profile and
+ * /auth/callback, all dynamic, so interception never has a cached response to
+ * return ahead of it.
  */
 export default defineCloudflareConfig({
   incrementalCache: withRegionalCache(r2IncrementalCache, {
     mode: "long-lived",
   }),
+  enableCacheInterception: true,
 });
