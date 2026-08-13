@@ -28,20 +28,25 @@
     "run_worker_first": false,
   },
 
-  // No "vars" block, deliberately.
+  // No "vars" block, deliberately — but read the second paragraph before
+  // concluding that dashboard variables are safe.
   //
   // Every `wrangler deploy` / `versions upload` treats this file as the source
-  // of truth for vars and deletes any plaintext variable set in the dashboard
-  // that is not listed here. Secrets are stored separately and survive, which
-  // is why TMDB_API_KEY persisted through a deploy while everything else
-  // vanished. Pass `--keep-vars` if dashboard-set vars ever need to stick.
+  // of truth for vars and deletes any plaintext variable not listed here.
+  // Secrets are stored separately and do survive. Pass `--keep-vars` if
+  // dashboard-set plaintext vars ever need to stick.
   //
-  // Nothing belongs here today: TMDB_API_KEY is the only value read at runtime
-  // and it is a secret. The six NEXT_PUBLIC_* variables are inlined into the
-  // bundle by `next build`, so they must be set as *build* environment
-  // variables in the Cloudflare build configuration. Adding them here would
-  // not help — by the time the Worker runs, the bundle has already baked in
-  // whatever was present at build time.
+  // TMDB_API_KEY is the one value read at runtime, and it must be a *secret*
+  // (`wrangler secret put TMDB_API_KEY`), not a dashboard variable. Set as a
+  // plaintext variable it looks fine until the next deploy silently removes it,
+  // and the failure is indirect: the token goes out empty, TMDB answers 401,
+  // and every /api route returns 502 while pages still render. That is exactly
+  // how it broke once. `wrangler secret list` should always list it.
+  //
+  // The six NEXT_PUBLIC_* variables belong nowhere near here. `next build`
+  // inlines them into the bundle, so they must be set as *build* environment
+  // variables in the Cloudflare build configuration — by the time the Worker
+  // runs, the bundle has already baked in whatever was present at build time.
 
   // Required for ISR: the Worker calls itself to revalidate a stale page.
   "services": [
