@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -20,7 +19,12 @@ export async function login(formData: FormData) {
     );
   }
 
-  revalidatePath("/", "layout");
+  // No `revalidatePath("/", "layout")` here. It existed so the header would
+  // pick up the new session back when the layout read it and passed down an
+  // email; the header resolves its own state now. It also reached further than
+  // it looked — "layout" covers every route beneath the root layout, so each
+  // sign-in asked to invalidate the whole ISR cache. That is inert while no tag
+  // cache is configured on Cloudflare, which is what would make it easy to miss.
   redirect(next.startsWith("/") ? next : "/");
 }
 
@@ -45,9 +49,8 @@ export async function signup(formData: FormData) {
   redirect("/signup?message=Check your email to confirm your account.");
 }
 
-export async function signout() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  revalidatePath("/", "layout");
-  redirect("/");
-}
+// There is no `signout` action. It lived here, and the header called it, but a
+// server-action redirect makes React re-render the root layout on the client —
+// where next-themes keeps a <script> it will not execute, warning every time.
+// UserMenu clears the session in the browser instead, which drops the same
+// cookies and lets onAuthStateChange update the header immediately.
