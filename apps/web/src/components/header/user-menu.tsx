@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { BookMarked, LogIn, LogOut, User } from "lucide-react";
 
@@ -16,7 +16,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { signout } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/client";
 
 function UserMenu() {
@@ -25,14 +24,16 @@ function UserMenu() {
   // so the first paint renders neutral space rather than flashing "Sign in" at
   // a user who is in fact signed in.
   const [email, setEmail] = useState<string | null | undefined>(undefined);
-  // Sign-in and sign-out are both server actions: they change the cookie and
-  // redirect, so supabase-js in this tab never performs either and
-  // onAuthStateChange stays silent. This component lives in the root layout, so
-  // it survives the redirect without remounting, and kept offering "Sign in" to
-  // someone already signed in. Detail pages looked correct only because their
-  // buttons mount fresh. Re-reading on navigation covers both directions, since
-  // each redirect is itself a navigation.
+  // Signing in is a server action: it sets the cookie and redirects, so
+  // supabase-js in this tab never performs it and onAuthStateChange stays
+  // silent. This component lives in the root layout, so it survives the
+  // redirect without remounting, and kept offering "Sign in" to someone already
+  // signed in. Detail pages looked correct only because their buttons mount
+  // fresh. Re-reading on navigation covers it, since the redirect is itself a
+  // navigation. Sign-out is handled in the browser (see below), so that
+  // direction updates through onAuthStateChange instead.
   const pathname = usePathname();
+  const router = useRouter();
   // One client for the component's life. Building a new one per navigation
   // spawns multiple GoTrue instances against the same storage.
   const supabase = useMemo(() => createClient(), []);
@@ -109,7 +110,19 @@ function UserMenu() {
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
           disabled={pending}
-          onSelect={() => startTransition(() => signout())}
+          onSelect={() =>
+            startTransition(async () => {
+              // Signing out in the browser rather than through the server
+              // action. The action redirected, and a server-action redirect
+              // makes React re-render the root layout on the client — where
+              // next-themes keeps a <script> that React will not execute,
+              // warning on every sign-out. Clearing the session here drops the
+              // same cookies, fires onAuthStateChange so the header updates
+              // immediately, and leaves the layout alone.
+              await supabase.auth.signOut();
+              router.push("/");
+            })
+          }
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
