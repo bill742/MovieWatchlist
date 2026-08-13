@@ -119,7 +119,12 @@ function UserMenu() {
               // warning on every sign-out. Clearing the session here drops the
               // same cookies, fires onAuthStateChange so the header updates
               // immediately, and leaves the layout alone.
-              await supabase.auth.signOut();
+              //
+              // `local` scope ends this browser's session only. The default is
+              // `global`, which revokes every session the account has — signing
+              // out on a laptop would sign you out on your phone, which is not
+              // what a "Sign out" in this menu implies.
+              await supabase.auth.signOut({ scope: "local" });
               router.push("/");
             })
           }
