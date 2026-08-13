@@ -37,8 +37,8 @@ import { withRegionalCache } from "@opennextjs/cloudflare/overrides/incremental-
  * return ahead of it.
  */
 export default defineCloudflareConfig({
+  enableCacheInterception: true,
   incrementalCache: withRegionalCache(r2IncrementalCache, {
     mode: "long-lived",
   }),
-  enableCacheInterception: true,
 });
