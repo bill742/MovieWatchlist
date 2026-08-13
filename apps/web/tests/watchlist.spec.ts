@@ -28,35 +28,36 @@ function fixturesFor(projectName: string) {
  * Drives the detail-page toggle until the stored state matches, which is all a
  * fixture needs — the button's own re-render is pinned by a separate spec.
  *
- * The click is inside the retry loop, not before it. The button is server
- * rendered, so it is clickable before React attaches its handler; a click
- * landing in that window is silently dropped, and no amount of reloading
- * recovers from it. WebKit hydrates slowly enough to hit this routinely.
- * Retrying is safe: add upserts and remove is a no-op when the row is gone.
+ * This used to reload in a retry loop because the button was server rendered
+ * and therefore clickable before React attached its handler, silently dropping
+ * the click. It resolves its own session and row in the browser now, so it does
+ * not exist until React has mounted it — once it is visible the handler is
+ * attached, and the loop was only costing time.
+ *
+ * What it does need is patience. The button appears two network round trips
+ * after the HTML (auth, then the watchlist lookup), and on a production build
+ * the page itself is served from cache, so the markup lands long before the
+ * button does.
  */
 async function setWatchlisted(page: Page, path: string, wanted: boolean) {
   const target = wanted ? "Remove from watchlist" : "Add to watchlist";
 
   await page.goto(path);
 
-  await expect(async () => {
-    await page.reload();
+  const toggle = page.getByRole("button", {
+    name: /^(Add to|Remove from) watchlist$/,
+  });
+  await expect(toggle).toBeVisible({ timeout: 20_000 });
 
-    const toggle = page.getByRole("button", {
-      name: /^(Add to|Remove from) watchlist$/,
-    });
-    await expect(toggle).toBeVisible({ timeout: 5_000 });
+  if ((await toggle.getAttribute("aria-label")) !== target) {
+    await toggle.click();
 
-    if ((await toggle.getAttribute("aria-label")) !== target) {
-      await toggle.click();
-    }
-
-    // Confirms the write landed. A click dropped before hydration leaves this
-    // unchanged, and the reload at the top of the next pass retries it.
+    // The label flips only after the server action resolves, so this confirms
+    // the write landed rather than just a local state change.
     await expect(toggle).toHaveAttribute("aria-label", target, {
-      timeout: 3_000,
+      timeout: 15_000,
     });
-  }).toPass({ timeout: 45_000 });
+  }
 }
 
 /** Rows are matched by link href so the assertions do not depend on TMDB copy. */
@@ -73,6 +74,13 @@ test.describe("Watchlist", () => {
   test.describe.configure({ mode: "serial" });
 
   test.beforeEach(async ({ page }, testInfo) => {
+    // The default 30s covers the hook and the test together, and this hook
+    // alone primes two fixtures that each wait on client-side auth. Under the
+    // old budget a slow fixture consumed the whole allowance and the test timed
+    // out before its own first assertion — the failure then pointed at the
+    // watchlist page while the snapshot showed a detail page.
+    test.setTimeout(120_000);
+
     const { moviePath, tvPath } = fixturesFor(testInfo.project.name);
     await setWatchlisted(page, moviePath, true);
     await setWatchlisted(page, tvPath, true);
