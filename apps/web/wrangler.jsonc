@@ -51,15 +51,15 @@
     },
   ],
 
-  // Uncomment once an R2 bucket exists to give ISR somewhere to persist
-  // rendered pages. Without it every detail-page request re-renders in the
-  // Worker — see the note in open-next.config.ts.
-  // "r2_buckets": [
-  //   {
-  //     "binding": "NEXT_INC_CACHE_R2_BUCKET",
-  //     "bucket_name": "moviewatchlist-cache",
-  //   },
-  // ],
+  // Where ISR persists rendered pages. The binding name is fixed — the adapter
+  // looks for NEXT_INC_CACHE_R2_BUCKET specifically, so renaming it silently
+  // disables the cache rather than failing. See open-next.config.ts.
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "moviewatchlist-cache",
+    },
+  ],
 
   "observability": {
     "enabled": false,
