@@ -1,7 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-import { AUTH_STATE } from "../playwright.config";
-
 // The browser projects reuse the session written by auth.setup.ts, which means
 // none of them ever exercise signing in. Start from a clean context so this
 // spec drives the real flow.
@@ -109,16 +107,10 @@ test.describe("Sign in", () => {
       "React warned about a script tag — the layout is being re-rendered on the client"
     ).toEqual([]);
 
-    // Sign back in and rewrite the shared state before leaving. supabase-js
-    // signs out globally by default, so the sign-out above revoked every
-    // session for this account — including the one auth.setup.ts saved and
-    // every other spec loads. Skipping this leaves the projects that run after
-    // Chromium holding dead tokens, which surfaced as watchlist failures that
-    // looked like flake and had nothing to do with the watchlist.
-    await page.getByLabel("Email").fill(email!);
-    await page.getByLabel("Password").fill(password!);
-    await page.getByRole("button", { name: "Sign in" }).click();
-    await page.waitForURL((url) => !url.pathname.startsWith("/login"));
-    await page.context().storageState({ path: AUTH_STATE });
+    // Nothing to restore. Sign-out uses `local` scope, so it ends this
+    // context's session and leaves the shared one from auth.setup.ts alone.
+    // Under the default `global` scope it revoked every session on the account,
+    // and the projects running after Chromium failed on dead tokens — as
+    // watchlist failures that had nothing to do with the watchlist.
   });
 });
