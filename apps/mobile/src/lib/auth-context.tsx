@@ -8,6 +8,11 @@ import {
 import type { Session } from "@supabase/supabase-js";
 
 import { clearRegionCache } from "./profile";
+import {
+  cancelReminders,
+  clearReminderHistory,
+  setRemindersEnabled,
+} from "./reminders";
 import { supabase } from "./supabase";
 
 interface AuthContextValue {
@@ -57,8 +62,15 @@ function AuthProvider({ children }: { children: ReactNode }) {
   async function signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-    // Otherwise the next account to sign in on this device inherits it.
+    // Otherwise the next account to sign in on this device inherits these.
     clearRegionCache();
+    await Promise.all([
+      cancelReminders(),
+      clearReminderHistory(),
+      setRemindersEnabled(false),
+    ]).catch((err) =>
+      console.warn("Could not clear reminders on sign-out:", err),
+    );
   }
 
   return (

@@ -1,9 +1,17 @@
 import { useCallback, useState } from "react";
 import { useFocusEffect } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { REGIONS } from "@moviewatchlist/shared";
 
+import { ReleaseRemindersSetting } from "@/components/release-reminders-setting";
+import { ReminderDevTools } from "@/components/reminder-dev-tools";
 import { useAuth } from "@/lib/auth-context";
 import { getRegion, updateRegion } from "@/lib/profile";
 
@@ -24,7 +32,7 @@ export default function ProfileScreen() {
       return () => {
         active = false;
       };
-    }, [])
+    }, []),
   );
 
   async function selectRegion(code: string) {
@@ -99,6 +107,12 @@ export default function ProfileScreen() {
         )}
 
         {error && <Text className="mt-3 text-sm text-red-400">{error}</Text>}
+
+        <Text className="mt-8 text-xs uppercase tracking-wide text-neutral-500">
+          Notifications
+        </Text>
+        <ReleaseRemindersSetting />
+        {__DEV__ && <ReminderDevTools />}
 
         <Pressable
           className="mt-10 items-center rounded-lg border border-neutral-800 px-4 py-3"

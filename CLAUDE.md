@@ -10,9 +10,10 @@ It is being built out per `PLAN.md` — **Phases 1 and 2 are complete** (monorep
 Supabase auth + database, watchlist, TV shows). **Phase 3 (Expo mobile app) is in
 progress**: the core app is built — auth plus a tabbed app (browse / search /
 watchlist), movie & TV detail screens, and season/episode tracking, all sharing the
-Supabase project and TMDB client with web (PLAN.md Phase 3 items 1–5). Still
-outstanding: push notifications and EAS Build/store submission (items 6–7). Payments
-and Trakt sync are future phases. Read `PLAN.md` for the roadmap, schema rationale, and
+Supabase project and TMDB client with web (PLAN.md Phase 3 items 1–5), plus
+premium-gated release-day reminders as local notifications (item 6). Still
+outstanding: EAS Build/store submission (item 7). Payments and Trakt sync are future
+phases. Read `PLAN.md` for the roadmap, schema rationale, and
 the free/premium feature split.
 
 ## Monorepo layout
@@ -108,6 +109,13 @@ Expo changes fast. Key facts:
   but throw instead of `revalidatePath`). Env vars must be `EXPO_PUBLIC_` prefixed; copy
   values from `apps/web/.env` into `apps/mobile/.env` (same Supabase project = shared
   accounts). See `apps/mobile/.env.example`.
+- **Release reminders:** `src/lib/reminders.ts` schedules *local* notifications
+  (`expo-notifications`) — no push server or push tokens. `syncReminders()` reads the
+  watchlist, looks up each title's next date on TMDB, and replaces every scheduled
+  reminder (ids prefixed `release:`, capped at 60 for iOS's 64-pending limit). It runs
+  on launch/foreground (`(app)/_layout.tsx`) and after watchlist writes; call it after
+  any new watchlist mutation. Gated by `isPremium()` (`src/lib/premium.ts`, reads the
+  `subscriptions` table) plus a per-device on/off flag in AsyncStorage.
 - **TMDB reads:** the shared `createTmdbClient` (`packages/shared/src/tmdb/client.ts`)
   is the single source for both apps — it now covers movies, TV, season detail, credits,
   and multi-search. Add new TMDB endpoints there, not in app-local code.
