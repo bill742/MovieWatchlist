@@ -6,6 +6,7 @@ import {
   WATCH_STATUS_OPTIONS,
 } from "@moviewatchlist/shared";
 
+import { syncReminders } from "@/lib/reminders";
 import {
   addToWatchlist,
   getWatchlistStatus,
@@ -40,6 +41,7 @@ function WatchlistButton({ mediaType, tmdbId }: WatchlistButtonProps) {
     try {
       await addToWatchlist(tmdbId, mediaType);
       setStatus("want_to_watch");
+      syncReminders();
     } finally {
       setBusy(false);
     }
@@ -51,6 +53,7 @@ function WatchlistButton({ mediaType, tmdbId }: WatchlistButtonProps) {
     try {
       await updateWatchStatus(tmdbId, mediaType, next);
       setStatus(next);
+      syncReminders();
     } finally {
       setBusy(false);
     }
@@ -62,6 +65,7 @@ function WatchlistButton({ mediaType, tmdbId }: WatchlistButtonProps) {
     try {
       await removeFromWatchlist(tmdbId, mediaType);
       setStatus(null);
+      syncReminders();
     } finally {
       setBusy(false);
     }
